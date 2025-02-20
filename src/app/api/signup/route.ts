@@ -2,7 +2,27 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/user.model";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
-import { hash } from './../../../../node_modules/bcryptjs/index';
+
+async function hashPassword(password: string): Promise<string> {
+  return await bcrypt.hash(password, 10);
+}
+
+async function createUser(username: string, email: string, password: string, verifyCode: string) {
+  const hashedPassword = await hashPassword(password);
+  const expiryDate = new Date();
+  expiryDate.setHours(expiryDate.getHours() + 1);
+  const newUser = new UserModel({
+    username,
+    email,
+    password: hashedPassword,
+    verifyCode,
+    verifyCodeExpiry: expiryDate,
+    isVerified: false,
+    isAcceptingMessages: true,
+    messages: [],
+  });
+  await newUser.save();
+}
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -37,27 +57,13 @@ export async function POST(request: Request) {
             }
         );
       } else {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        existingUserByEmail.password = hashedPassword;
+        existingUserByEmail.password = await hashPassword(password);
         existingUserByEmail.verifyCode = verifyCode;
         existingUserByEmail.verifyCodeExpiry = new Date(Date.now()+3600000);
         await existingUserByEmail.save();
       }
     } else {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const expiryDate = new Date();
-      expiryDate.setHours(expiryDate.getHours() + 1);
-      const newUser = new UserModel({
-        username,
-        email,
-        password: hashedPassword,
-        verifyCode,
-        verifyCodeExpiry: expiryDate,
-        isVerified: false,
-        isAcceptingMessages: true,
-        messages: [],
-      });
-        await newUser.save();
+      await createUser(username, email, password, verifyCode);
     }
     const emailResponse = await sendVerificationEmail(
         email, 
