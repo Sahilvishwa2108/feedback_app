@@ -69,7 +69,7 @@ const page = () => {
     try {
       const response = await axios.post<ApiResponse>("/api/signup", data);
       toast.success(response.data.message);
-      router.push("/api/verify-code");
+      router.push(`/verify/${username}`);
     } catch (error) {
       const AxiosError = error as AxiosError<ApiResponse>;
       toast.error(AxiosError.response?.data.message || "An error occurred");
