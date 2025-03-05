@@ -10,7 +10,7 @@ import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@react-email/components";
+import { Button } from "@/components/ui/button";
 
 const VerifyAccount = () => {
   const router = useRouter();

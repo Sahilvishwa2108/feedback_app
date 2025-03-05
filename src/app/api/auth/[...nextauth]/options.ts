@@ -23,16 +23,22 @@ export const authOptions: NextAuthOptions = {
                         ],
                     });
                     if (!user) {
+                        console.log("No user found");
                         throw new Error("No user found");
                     }
                     if (!user.isVerified) {
+                        console.log("User not verified");
                         throw new Error("User not verified");
                     }
                     const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
                     if (!isPasswordCorrect) {
+                        console.log("Password incorrect");
                         throw new Error("Password incorrect");
                     }
+                    console.log("User authenticated successfully");
+                    return user;
                 } catch (error: any) {
+                    console.error("Error in authorize function:", error);
                     throw new Error(error);
                 }
             },
@@ -54,8 +60,6 @@ export const authOptions: NextAuthOptions = {
                 session.user.isVerified = token.isVerified;
                 session.user.isAcceptingMessages = token.isAcceptingMessages;
                 session.user.username = token.username;
-                
-
             }
             return session;
         },

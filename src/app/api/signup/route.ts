@@ -7,7 +7,7 @@ async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 10);
 }
 
-async function createUser(username: string, email: string, password: string, verifyCode: string) {
+async function createUser(username: string, email: string, password: string, verifyCode: number) {
   const hashedPassword = await hashPassword(password);
   const expiryDate = new Date();
   expiryDate.setHours(expiryDate.getHours() + 1);
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       );
     }
     const existingUserByEmail = await UserModel.findOne({ email });
-    const verifyCode = Math.random().toString(36).slice(2);
+    const verifyCode = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit integer code
     if (existingUserByEmail) {
       if(existingUserByEmail.isVerified){
         return Response.json(
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     const emailResponse = await sendVerificationEmail(
         email, 
         username,
-        verifyCode
+        verifyCode.toString() // Convert to string for email
     );
     if(!emailResponse.success){
         return Response.json(
