@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/user.model";
+
 export async function POST(request: Request): Promise<Response> {
     await dbConnect();
     try {
@@ -17,8 +18,10 @@ export async function POST(request: Request): Promise<Response> {
                 }
             );
         }
-        const isCodeValid = user.verifyCode === code;
+
+        const isCodeValid = user.verifyCode === Number(code); // Convert code to number
         const isCodeNotExpired = new Date() < new Date(user.verifyCodeExpiry);
+
         if (isCodeValid && isCodeNotExpired) {
             user.isVerified = true;
             await user.save();
