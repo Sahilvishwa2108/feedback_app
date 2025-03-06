@@ -24,7 +24,7 @@ const Dashboard = () => {
     setMessages(messages.filter((message) => message._id !== messageId));
   };
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
   });
@@ -66,12 +66,15 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
-    fetchMessages(false);
-    fetchAcceptMessage();
-  }, [fetchMessages, fetchAcceptMessage, session, setValue]);
+    if (status === "authenticated") {
+      fetchMessages(false);
+      fetchAcceptMessage();
+    }
+  }, [fetchMessages, fetchAcceptMessage, session, setValue, status]);
 
   //handle switch change
   const handleSwitchChange = async () => {
+    setIsSwitchLoading(true);
     try {
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
         acceptMessages: !acceptMessages,
@@ -86,17 +89,21 @@ const Dashboard = () => {
     }
   };
 
-  const { username } = session?.user as User;
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (!session || !session.user) {
+    return <div>Unauthorized</div>;
+  }
+
+  const { username } = session.user as User;
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const profileUrl = `${baseUrl}/u/${username}`;
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
     toast.success("Profile URL copied to clipboard");
   };
-
-  if (!session || !session.user) {
-    return <div>Unauthorized</div>;
-  }
 
   return (
     <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
