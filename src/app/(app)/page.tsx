@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Mail } from 'lucide-react'; // Assuming you have an icon for messages
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useRef, useState } from 'react';
-import messages from '@/data/messages.json';
+import messages from '@/messages.json';
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);

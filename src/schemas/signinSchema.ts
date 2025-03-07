@@ -1,5 +1,7 @@
-import {z} from 'zod';
-export const signinSchema = z.object({
-    identifier: z.string().email(),
-    password: z.string().min(8),
+import { z } from 'zod'
+
+export const signInSchema = z.object({
+  identifier: z.string(),
+  password: z.string(),
 });
+
