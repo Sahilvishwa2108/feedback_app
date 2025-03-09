@@ -16,7 +16,13 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
-import { signInSchema } from '@/schemas/signinSchema';
+import { motion } from 'framer-motion';
+import { signInSchema } from '@/schemas/signInSchema';
+
+const containerVariants = {
+  hidden: { opacity: 0, y: -50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 export default function SignInForm() {
   const router = useRouter();
@@ -29,7 +35,6 @@ export default function SignInForm() {
     },
   });
 
-   
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     const result = await signIn('credentials', {
       redirect: false,
@@ -51,13 +56,18 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-800">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <motion.div
+      className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-400 via-blue-500 to-purple-500"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6 text-gray-800">
             Welcome Back to True Feedback
           </h1>
-          <p className="mb-4">Sign in to continue your secret conversations</p>
+          <p className="mb-4 text-gray-600">Sign in to continue your secret conversations</p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -83,7 +93,7 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
-            <Button className='w-full' type="submit">Sign In</Button>
+            <Button className='w-full bg-gradient-to-r from-green-500 to-blue-500 text-white' type="submit">Sign In</Button>
           </form>
         </Form>
         <div className="text-center mt-4">
@@ -95,6 +105,6 @@ export default function SignInForm() {
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
