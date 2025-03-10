@@ -34,16 +34,11 @@ function UserDashboard() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter((message) => message._id !== messageId));
-  };
-
   const { data: session } = useSession();
 
   const form = useForm({
     resolver: zodResolver(AcceptMessageSchema),
   });
-
   const { register, watch, setValue } = form;
   const acceptMessages = watch('acceptMessages');
 
@@ -60,38 +55,29 @@ function UserDashboard() {
     } finally {
       setIsSwitchLoading(false);
     }
-  }, [setValue, toast]);
+  }, [setValue]);
 
-  const fetchMessages = useCallback(
-    async (refresh: boolean = false) => {
-      setIsLoading(true);
-      setIsSwitchLoading(false);
-      try {
-        const response = await axios.get<ApiResponse>('/api/get-messages');
-        setMessages(response.data.messages || []);
-        if (refresh) {
-          toast.success('Messages refreshed');
-        }
-      } catch (error) {
-        const axiosError = error as AxiosError<ApiResponse>;
-        toast.error(
-          axiosError.response?.data.message ?? 'Failed to fetch messages'
-        );
-      } finally {
-        setIsLoading(false);
-        setIsSwitchLoading(false);
+  const fetchMessages = useCallback(async (refresh: boolean = false) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get<ApiResponse>('/api/get-messages');
+      setMessages(response.data.messages || []);
+      if (refresh) {
+        toast.success('Messages refreshed');
       }
-    },
-    [setIsLoading, setMessages, toast]
-  );
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+      toast.error(
+        axiosError.response?.data.message ?? 'Failed to fetch messages'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  useEffect(() => {
-    if (!session || !session.user) return;
-
-    fetchMessages();
-
-    fetchAcceptMessages();
-  }, [session, setValue, toast, fetchAcceptMessages, fetchMessages]);
+  const handleDeleteMessage = (messageId: string) => {
+    setMessages(messages.filter((message) => message._id !== messageId));
+  };
 
   const handleSwitchChange = async () => {
     try {
@@ -108,20 +94,6 @@ function UserDashboard() {
     }
   };
 
-  if (!session || !session.user) {
-    return <div>Unauthorized</div>;
-  }
-
-  const { username } = session.user as User;
-
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
-  const profileUrl = `${baseUrl}/u/${username}`;
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl);
-    toast.success('Copied to clipboard');
-  };
-
   const startAutoplay = () => {
     intervalRef.current = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % messages.length);
@@ -135,76 +107,104 @@ function UserDashboard() {
   };
 
   useEffect(() => {
+    if (!session || !session.user) return;
+
+    fetchMessages();
+    fetchAcceptMessages();
+  }, [session, fetchMessages, fetchAcceptMessages]);
+
+  useEffect(() => {
     startAutoplay();
     return () => stopAutoplay();
   }, [messages]);
 
+  if (!session || !session.user) {
+    return <div>Unauthorized</div>;
+  }
+
+  const { username } = session.user as User;
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const profileUrl = `${baseUrl}/u/${username}`;
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(profileUrl);
+    toast.success('Copied to clipboard');
+  };
+
   return (
-    <motion.div
-      className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg text-white"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <motion.h1 className="text-4xl font-bold mb-4" variants={itemVariants}>
-        User Dashboard
-      </motion.h1>
+    <>
+      {(!session || !session.user) ? (
+        <div>Unauthorized</div>
+      ) : (
+        <motion.div
+          className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg shadow-lg text-white"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          <motion.h1 className="text-4xl font-bold mb-4" variants={itemVariants}>
+            User Dashboard
+          </motion.h1>
 
-      <motion.div className="mb-4" variants={itemVariants}>
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
-        <div className="flex items-center">
-          <input
-            type="text"
-            value={profileUrl}
-            disabled
-            className="input input-bordered w-full p-2 mr-2 text-gray-800"
-          />
-          <Button onClick={copyToClipboard} className="bg-white text-gray-800">Copy</Button>
-        </div>
-      </motion.div>
-
-      <motion.div className="mb-4" variants={itemVariants}>
-        <Switch
-          {...register('acceptMessages')}
-          checked={acceptMessages}
-          onCheckedChange={handleSwitchChange}
-          disabled={isSwitchLoading}
-        />
-        <span className="ml-2">
-          Accept Messages: {acceptMessages ? 'On' : 'Off'}
-        </span>
-      </motion.div>
-      <Separator />
-
-      <Button
-        className="mt-4 bg-white text-gray-800"
-        variant="outline"
-        onClick={(e) => {
-          e.preventDefault();
-          fetchMessages(true);
-        }}
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <RefreshCcw className="h-4 w-4" />
-        )}
-      </Button>
-      <motion.div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6" variants={containerVariants}>
-        {messages.length > 0 ? (
-          messages.map((message, index) => (
-            <motion.div key={message._id as string} variants={itemVariants}>
-              <MessageCard
-                message={message}
-                onMessageDelete={handleDeleteMessage}
+          <motion.div className="mb-4" variants={itemVariants}>
+            <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={profileUrl}
+                disabled
+                className="input input-bordered w-full p-2 mr-2 text-gray-800"
               />
-            </motion.div>
-          ))
-        ) : (
-          <p>No messages to display.</p>
-        )}
-      </motion.div>
-    </motion.div>
+              <Button onClick={copyToClipboard} className="bg-white text-gray-800">
+                Copy
+              </Button>
+            </div>
+          </motion.div>
+
+          <motion.div className="mb-4" variants={itemVariants}>
+            <Switch
+              {...register('acceptMessages')}
+              checked={acceptMessages}
+              onCheckedChange={handleSwitchChange}
+              disabled={isSwitchLoading}
+            />
+            <span className="ml-2">
+              Accept Messages: {acceptMessages ? 'On' : 'Off'}
+            </span>
+          </motion.div>
+          <Separator />
+
+          <Button
+            className="mt-4 bg-white text-gray-800"
+            variant="outline"
+            onClick={(e) => {
+              e.preventDefault();
+              fetchMessages(true);
+            }}
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCcw className="h-4 w-4" />
+            )}
+          </Button>
+          <motion.div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6" variants={containerVariants}>
+            {messages.length > 0 ? (
+              messages.map((message, index) => (
+                <motion.div key={message._id as string} variants={itemVariants}>
+                  <MessageCard
+                    message={message}
+                    onMessageDelete={handleDeleteMessage}
+                  />
+                </motion.div>
+              ))
+            ) : (
+              <p>No messages to display.</p>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </>
   );
 }
 
