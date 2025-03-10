@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from 'ai/react';
+import { useCompletion } from '@ai-sdk/react';
 import {
   Form,
   FormControl,
@@ -24,6 +24,7 @@ import { ApiResponse } from '@/types/ApiResponse';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { messageSchema } from '@/schemas/messageSchema';
+import { motion } from 'framer-motion';
 
 const specialChar = '||';
 
@@ -33,6 +34,22 @@ const parseStringMessages = (messageString: string): string[] => {
 
 const initialMessageString =
   "What's your favorite movie?||Do you have any pets?||What's your dream job?";
+
+const containerVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
@@ -88,18 +105,32 @@ export default function SendMessage() {
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6 text-center">
+    <motion.div
+      className="container mx-auto my-8 p-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-lg shadow-lg max-w-4xl"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.h1
+        className="text-4xl font-bold mb-6 text-center text-white"
+        variants={itemVariants}
+      >
         Public Profile Link
-      </h1>
+      </motion.h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <motion.form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+          variants={containerVariants}
+        >
           <FormField
             control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Send Anonymous Message to @{username}</FormLabel>
+                <FormLabel className="text-white">
+                  Send Anonymous Message to @{username}
+                </FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Write your anonymous message here"
@@ -123,10 +154,10 @@ export default function SendMessage() {
               </Button>
             )}
           </div>
-        </form>
+        </motion.form>
       </Form>
 
-      <div className="space-y-4 my-8">
+      <motion.div className="space-y-4 my-8" variants={containerVariants}>
         <div className="space-y-2">
           <Button
             onClick={fetchSuggestedMessages}
@@ -135,9 +166,9 @@ export default function SendMessage() {
           >
             Suggest Messages
           </Button>
-          <p>Click on any message below to select it.</p>
+          <p className="text-white">Click on any message below to select it.</p>
         </div>
-        <Card>
+        <Card className="bg-white shadow-lg">
           <CardHeader>
             <h3 className="text-xl font-semibold">Messages</h3>
           </CardHeader>
@@ -146,26 +177,32 @@ export default function SendMessage() {
               <p className="text-red-500">{error.message}</p>
             ) : (
               parseStringMessages(completion).map((message, index) => (
-                <Button
+                <motion.div
                   key={index}
-                  variant="outline"
-                  className="mb-2"
-                  onClick={() => handleMessageClick(message)}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {message}
-                </Button>
+                  <Button
+                    variant="outline"
+                    className="mb-2 w-full"
+                    onClick={() => handleMessageClick(message)}
+                  >
+                    {message}
+                  </Button>
+                </motion.div>
               ))
             )}
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
       <Separator className="my-6" />
-      <div className="text-center">
-        <div className="mb-4">Get Your Message Board</div>
+      <motion.div className="text-center" variants={itemVariants}>
+        <div className="mb-4 text-white">Get Your Message Board</div>
         <Link href={'/sign-up'}>
           <Button>Create Your Account</Button>
         </Link>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
