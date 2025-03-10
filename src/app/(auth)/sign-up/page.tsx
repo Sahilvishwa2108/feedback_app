@@ -3,9 +3,9 @@
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDebounceCallback } from "usehooks-ts";
+import { useDebounceCallback } from 'usehooks-ts';
 import * as z from 'zod';
 import { motion } from 'framer-motion';
 
@@ -18,11 +18,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from "sonner";
-import axios, { AxiosError } from 'axios';
+import { toast } from 'sonner';
+import axios, { AxiosError, CancelTokenSource } from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { signUpSchema } from '@/schemas/signupSchema';
+import { signUpSchema } from '@/schemas/signUpSchema';
 
 const containerVariants = {
   hidden: { opacity: 0, y: -50 },
@@ -34,9 +34,53 @@ const SignUpPage = () => {
   const [usernameMessage, setUsernameMessage] = useState('');
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const debouncedUsername = useDebounceCallback(setUsername, 500);
-
   const router = useRouter();
+
+  // Ref to store the cancel token of the current API request.
+  const cancelTokenRef = useRef<CancelTokenSource | null>(null);
+
+  // Use a ref to store the debounced function so it isn't recreated on every render.
+  const debouncedCheckUsername = useRef(
+    useDebounceCallback(async (username: string) => {
+      if (username.length > 3) {
+        setIsCheckingUsername(true);
+        setUsernameMessage(''); // Reset previous message
+
+        // Cancel any previous pending request
+        if (cancelTokenRef.current) {
+          cancelTokenRef.current.cancel('New request initiated');
+        }
+        cancelTokenRef.current = axios.CancelToken.source();
+
+        try {
+          const response = await axios.get<ApiResponse>(
+            `/api/check-username-unique?username=${encodeURIComponent(username)}`,
+            { cancelToken: cancelTokenRef.current.token }
+          );
+          setUsernameMessage(response.data.message);
+        } catch (error) {
+          if (axios.isCancel(error)) {
+            // Request was canceled—no action needed.
+            console.log('Previous request canceled');
+          } else {
+            const axiosError = error as AxiosError<ApiResponse>;
+            setUsernameMessage(
+              axiosError.response?.data.message ?? 'Error checking username'
+            );
+          }
+        } finally {
+          setIsCheckingUsername(false);
+        }
+      }
+    }, 500)
+  ).current;
+
+  useEffect(() => {
+    if (username.length > 3) {
+      debouncedCheckUsername(username);
+    }
+    // No need to include debouncedCheckUsername in dependency since it's stable.
+  }, [username]);
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -47,50 +91,20 @@ const SignUpPage = () => {
     },
   });
 
-  useEffect(() => {
-    const checkUsernameUnique = async () => {
-      if (username) {
-        setIsCheckingUsername(true);
-        setUsernameMessage(''); // Reset message
-        try {
-          const response = await axios.get<ApiResponse>(
-            `/api/check-username-unique?username=${debouncedUsername}`
-          );
-          setUsernameMessage(response.data.message);
-        } catch (error) {
-          const axiosError = error as AxiosError<ApiResponse>;
-          setUsernameMessage(
-            axiosError.response?.data.message ?? 'Error checking username'
-          );
-        } finally {
-          setIsCheckingUsername(false);
-        }
-      }
-    };
-    checkUsernameUnique();
-  }, [debouncedUsername]);
-
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true);
     try {
       const response = await axios.post<ApiResponse>('/api/sign-up', data);
-
       toast.success(response.data.message);
-
-      router.replace(`/verify/${username}`);
-
-      setIsSubmitting(false);
+      router.replace(`/verify/${data.username}`);
     } catch (error) {
       console.error('Error during sign-up:', error);
-
       const axiosError = error as AxiosError<ApiResponse>;
-
-      // Default error message
-      let errorMessage = axiosError.response?.data.message;
-      ('There was a problem with your sign-up. Please try again.');
-
+      const errorMessage =
+        axiosError.response?.data.message ??
+        'There was a problem with your sign-up. Please try again.';
       toast.error(errorMessage);
-
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -107,7 +121,9 @@ const SignUpPage = () => {
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6 text-gray-800">
             Join True Feedback
           </h1>
-          <p className="mb-4 text-gray-600">Sign up to start your anonymous adventure</p>
+          <p className="mb-4 text-gray-600">
+            Sign up to start your anonymous adventure
+          </p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -147,12 +163,13 @@ const SignUpPage = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <Input {...field} name="email" />
-                  <p className='text-muted text-gray-400 text-sm'>We will send you a verification code</p>
+                  <p className="text-muted text-gray-400 text-sm">
+                    We will send you a verification code
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               name="password"
               control={form.control}
@@ -164,7 +181,11 @@ const SignUpPage = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className='w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white' disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -190,4 +211,3 @@ const SignUpPage = () => {
 };
 
 export default SignUpPage;
-
