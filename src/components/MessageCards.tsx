@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React from 'react'; // Removed unused useState import
 import axios, { AxiosError } from 'axios';
 import { X } from 'lucide-react';
 import { Message } from '@/model/User';

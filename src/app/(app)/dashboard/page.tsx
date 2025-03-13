@@ -31,7 +31,6 @@ function UserDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: session } = useSession();
@@ -94,11 +93,13 @@ function UserDashboard() {
     }
   };
 
-  const startAutoplay = () => {
+  const startAutoplay = useCallback(() => {
     intervalRef.current = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % messages.length);
+      if (messages.length === 0 && intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     }, 2000);
-  };
+  }, [messages.length]);
 
   const stopAutoplay = () => {
     if (intervalRef.current) {
@@ -116,7 +117,7 @@ function UserDashboard() {
   useEffect(() => {
     startAutoplay();
     return () => stopAutoplay();
-  }, [messages]);
+  }, [messages, startAutoplay]);
 
   if (!session || !session.user) {
     return <div>Unauthorized</div>;
@@ -190,7 +191,7 @@ function UserDashboard() {
           </Button>
           <motion.div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6" variants={containerVariants}>
             {messages.length > 0 ? (
-              messages.map((message, index) => (
+              messages.map((message) => (
                 <motion.div key={message._id as string} variants={itemVariants}>
                   <MessageCard
                     message={message}

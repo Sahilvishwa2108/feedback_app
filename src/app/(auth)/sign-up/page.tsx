@@ -79,8 +79,7 @@ const SignUpPage = () => {
     if (username.length > 3) {
       debouncedCheckUsername(username);
     }
-    // No need to include debouncedCheckUsername in dependency since it's stable.
-  }, [username]);
+  }, [username, debouncedCheckUsername]); // Added debouncedCheckUsername to dependencies
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
