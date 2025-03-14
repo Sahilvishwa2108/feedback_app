@@ -38,16 +38,24 @@ export default function SignInForm() {
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     const result = await signIn('credentials', {
       redirect: false,
-      identifier: data.identifier,
+      email: data.identifier,  // Change identifier to email
       password: data.password,
     });
 
     if (result?.error) {
+      // Check for specific error messages
       if (result.error === 'CredentialsSignin') {
         toast.error('Invalid email or password');
+      } else if (result.error.includes('verify your account')) {
+        toast.error('Please verify your account before login');
+      } else if (result.error.includes('No user found')) {
+        toast.error('No user found with this email or username');
       } else {
-        toast.error('An error occurred. Please try again later');
+        // For debugging - can remove in production
+        console.error('Auth error:', result.error);
+        toast.error(result.error || 'An error occurred. Please try again later');
       }
+      return;
     }
 
     if (result?.url) {
