@@ -3,19 +3,20 @@ import { getServerSession } from 'next-auth/next';
 import dbConnect from '@/lib/dbConnect';
 import { User } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextRequest, NextResponse } from 'next/server';
 
 export async function DELETE(
-  request: NextApiRequest,
-  response: NextApiResponse
+  request: NextRequest,
+  response: NextResponse
 ) {
-  const messageId = request.query.messageid as string;
+  const messageId = request.nextUrl.searchParams.get('messageid') as string;
   await dbConnect();
   const session = await getServerSession(authOptions);
   const _user: User = session?.user;
   if (!session || !_user) {
-    return response.status(401).json(
-      { success: false, message: 'Not authenticated' }
+    return new Response(
+      JSON.stringify({ success: false, message: 'Not authenticated' }),
+      { status: 401 }
     );
   }
 
@@ -26,18 +27,21 @@ export async function DELETE(
     );
 
     if (updateResult.modifiedCount === 0) {
-      return response.status(404).json(
-        { message: 'Message not found or already deleted', success: false }
+      return new Response(
+        JSON.stringify({ message: 'Message not found or already deleted', success: false }),
+        { status: 404 }
       );
     }
 
-    return response.status(200).json(
-      { message: 'Message deleted', success: true }
+    return new Response(
+      JSON.stringify({ message: 'Message deleted', success: true }),
+      { status: 200 }
     );
   } catch (error) {
     console.error('Error deleting message:', error);
-    return response.status(500).json(
-      { message: 'Error deleting message', success: false }
+    return new Response(
+      JSON.stringify({ message: 'Error deleting message', success: false }),
+      { status: 500 }
     );
   }
 }
