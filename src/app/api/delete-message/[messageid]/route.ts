@@ -12,7 +12,7 @@ interface ExtendedUser extends User {
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { messageid: string } }
+  { params }: any
 ): Promise<NextResponse> {
   try {
     await dbConnect();
