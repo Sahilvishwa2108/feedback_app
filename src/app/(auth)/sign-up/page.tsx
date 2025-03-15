@@ -373,7 +373,7 @@ const SignUpPage = () => {
                           />
                         </motion.div>
                         <p className="text-gray-400 text-xs mt-1">
-                          We'll send a verification code to this email
+                          We&apos;ll send a verification code to this email
                         </p>
                         <FormMessage className="text-red-400" />
                       </FormItem>
@@ -462,7 +462,7 @@ const SignUpPage = () => {
               variants={itemVariants}
             >
               <p className="text-gray-400">
-                Already a member?&#39;{' '}
+                Already a member?{' '}
                 <Link href="/sign-in" className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
                   <motion.span whileHover={{ 
                     textShadow: "0 0 8px rgba(168, 85, 247, 0.6)",
