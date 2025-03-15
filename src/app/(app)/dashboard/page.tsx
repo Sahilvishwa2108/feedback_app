@@ -281,7 +281,6 @@ function UserDashboard() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -351,7 +350,7 @@ function UserDashboard() {
         clearInterval(intervalRef.current);
       }
     }, 2000);
-  }, []);
+  }, [messages.length]);
 
   const stopAutoplay = () => {
     if (intervalRef.current) {
@@ -402,13 +401,7 @@ function UserDashboard() {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
     toast.success('Copied to clipboard');
-    setCopied(true);
     setShowToast(true);
-    
-    // Reset copy button state after 2 seconds
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
     
     // Hide toast after 3 seconds
     setTimeout(() => {

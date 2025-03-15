@@ -179,7 +179,7 @@ export default function Home() {
   const nextSlide = useCallback(() => {
     setDirection(1);
     setCurrentIndex((prevIndex) => (prevIndex + 1) % messages.length);
-  }, [messages.length]);
+  }, []);
 
   const startAutoplay = useCallback(() => {
     intervalRef.current = setInterval(() => {

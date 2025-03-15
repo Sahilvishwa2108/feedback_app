@@ -4,7 +4,7 @@ import React from 'react';
 import axios, { AxiosError } from 'axios';
 import { Trash2, Clock, MessageSquare } from 'lucide-react';
 import { Message } from '@/model/User';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
