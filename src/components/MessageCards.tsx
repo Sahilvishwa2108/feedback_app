@@ -30,16 +30,23 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
 
   const handleDeleteConfirm = async () => {
     try {
+      // Ensure we have a string ID
+      const messageId = message._id?.toString();
+      
+      if (!messageId) {
+        toast.error("Cannot delete: Invalid message ID");
+        return;
+      }
+      
       const response = await axios.delete<ApiResponse>(
-        `/api/delete-message/${message._id}`
+        `/api/delete-message/${messageId}`
       );
+      
       toast.success(response.data.message);
-      // Fix: use _id consistently
-      onMessageDelete(message._id as string);
-
+      onMessageDelete(messageId);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast.error(axiosError.response?.data.message);
+      toast.error(axiosError.response?.data.message || 'Failed to delete message');
     } 
   };
 

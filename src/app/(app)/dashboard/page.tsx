@@ -327,7 +327,7 @@ function UserDashboard() {
   }, []);
 
   const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter((message) => message.id !== messageId));
+    setMessages(messages.filter((message) => message._id !== messageId));
   };
 
   const handleSwitchChange = async () => {
