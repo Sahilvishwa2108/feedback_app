@@ -7,7 +7,7 @@ import { authOptions } from '../../auth/[...nextauth]/options';
 
 export async function DELETE(
   request: Request,
-  { params, searchParams }: { 
+  { params, searchParams: _searchParams }: { 
     params: { messageid: string }; 
     searchParams: { [key: string]: string | string[] | undefined }; 
   }
