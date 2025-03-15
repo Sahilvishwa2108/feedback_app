@@ -254,15 +254,6 @@ function Navbar() {
     }
   };
 
-  const buttonVariants = {
-    initial: { scale: 1 },
-    hover: { 
-      scale: 1.05,
-      boxShadow: "0 0 15px rgba(139, 92, 246, 0.5)",
-    },
-    tap: { scale: 0.98 },
-  };
-
   // Mysterious glow animation for nav
   const glowVariants = {
     initial: { opacity: 0 },

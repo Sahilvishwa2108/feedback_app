@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { Mail, MessageSquare, Shield, Eye, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import messages from '@/messages.json';
 
@@ -176,21 +176,21 @@ export default function Home() {
     mouseY.set(y);
   };
 
-  const startAutoplay = () => {
+  const nextSlide = useCallback(() => {
+    setDirection(1);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % messages.length);
+  }, [messages.length]);
+
+  const startAutoplay = useCallback(() => {
     intervalRef.current = setInterval(() => {
       nextSlide();
     }, 4000);
-  };
+  }, [nextSlide]); // Add nextSlide as a dependency
 
   const stopAutoplay = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
-  };
-
-  const nextSlide = () => {
-    setDirection(1);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % messages.length);
   };
 
   const prevSlide = () => {
@@ -201,7 +201,7 @@ export default function Home() {
   useEffect(() => {
     startAutoplay();
     return () => stopAutoplay();
-  }, []);
+  }, [startAutoplay]); // Add startAutoplay to dependency array
 
   const [currentYear, setCurrentYear] = useState(""); 
 
