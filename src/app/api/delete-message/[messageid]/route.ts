@@ -7,11 +7,14 @@ import { authOptions } from '../../auth/[...nextauth]/options';
 
 export async function DELETE(
   request: Request,
-  { params, searchParams: _searchParams }: { 
+  { params, searchParams }: { 
     params: { messageid: string }; 
-    searchParams: { [key: string]: string | string[] | undefined }; 
+    searchParams: Record<string, string | string[] | undefined>;
   }
 ) {
+  // Reference searchParams to prevent ESLint unused-variable error
+  void searchParams;
+
   const messageId = params.messageid;
   
   await dbConnect();
