@@ -1,52 +1,64 @@
-export const runtime = 'nodejs';
+import UserModel from "@/model/User";
+import { getServerSession } from "next-auth/next";
+import dbConnect from "@/lib/dbConnect";
+import { User } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
+import { NextRequest, NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 
-import UserModel from '@/model/User';
-import { getServerSession } from 'next-auth/next';
-import dbConnect from '@/lib/dbConnect';
-import { authOptions } from '../../auth/[...nextauth]/options';
+// Define a custom user type that includes MongoDB _id
+interface ExtendedUser extends User {
+  _id: string;
+}
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { messageid: string } }
-): Promise<Response> {
-  const messageId = params.messageid;
-
-  // Establish database connection
-  await dbConnect();
-
-  // Retrieve session details
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user) {
-    return new Response(
-      JSON.stringify({ success: false, message: 'Not authenticated' }),
-      { status: 401 }
-    );
-  }
-
+): Promise<NextResponse> {
   try {
-    // Remove the message from the user's messages array
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { success: false, message: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+    
+    const user = session.user as ExtendedUser;
+    const messageId = params.messageid;
+    
+    // Validate the messageId
+    if (!messageId || typeof messageId !== 'string') {
+      return NextResponse.json(
+        { success: false, message: "Invalid message ID" },
+        { status: 400 }
+      );
+    }
+    
     const updateResult = await UserModel.updateOne(
-      { _id: session.user._id },
+      { _id: user._id },
       { $pull: { messages: { _id: messageId } } }
     );
 
-    // If no document was modified, the message wasn't found or already removed
     if (updateResult.modifiedCount === 0) {
-      return new Response(
-        JSON.stringify({ success: false, message: 'Message not found or already deleted' }),
+      return NextResponse.json(
+        { success: false, message: "Message not found or already deleted" },
         { status: 404 }
       );
     }
 
-    // Successfully deleted the message
-    return new Response(
-      JSON.stringify({ success: true, message: 'Message deleted' }),
+    return NextResponse.json(
+      { success: true, message: "Message deleted successfully" },
       { status: 200 }
     );
-  } catch (error) {
-    console.error('Error deleting message:', error);
-    return new Response(
-      JSON.stringify({ success: false, message: 'Error deleting message' }),
+  } catch (error: unknown) {
+    console.error("Error deleting message:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+    
+    return NextResponse.json(
+      { success: false, message: "Failed to delete message", error: errorMessage },
       { status: 500 }
     );
   }
