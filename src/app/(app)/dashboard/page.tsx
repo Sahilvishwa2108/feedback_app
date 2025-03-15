@@ -351,7 +351,7 @@ function UserDashboard() {
         clearInterval(intervalRef.current);
       }
     }, 2000);
-  }, [messages.length]);
+  }, []);
 
   const stopAutoplay = () => {
     if (intervalRef.current) {

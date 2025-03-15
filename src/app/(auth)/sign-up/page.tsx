@@ -462,7 +462,7 @@ const SignUpPage = () => {
               variants={itemVariants}
             >
               <p className="text-gray-400">
-                Already a member?{' '}
+                Already a member?&#39;{' '}
                 <Link href="/sign-in" className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
                   <motion.span whileHover={{ 
                     textShadow: "0 0 8px rgba(168, 85, 247, 0.6)",
