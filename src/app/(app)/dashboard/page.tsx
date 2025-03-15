@@ -502,30 +502,31 @@ function UserDashboard() {
                   </p>
                   
                   {/* Link input & copy button */}
-                  <div className="relative">
+                  <div className="relative flex items-center">
                     <input
                       type="text"
                       value={profileUrl}
                       disabled
                       className="w-full bg-gray-800/50 border border-purple-500/20 rounded-md p-3 text-gray-200 pr-12"
                     />
-                    <motion.button
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-purple-400 hover:text-purple-300"
-                      onClick={copyToClipboard}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      animate={copied ? { scale: [1, 1.2, 1] } : {}}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Copy size={18} />
-                    </motion.button>
+                    <div className="absolute right-3 flex items-center justify-center">
+                      <motion.button
+                        className="text-purple-400 hover:text-purple-300 p-1.5 rounded-md"
+                        onClick={copyToClipboard}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Copy size={18} />
+                      </motion.button>
+                    </div>
                   </div>
                   
                   {/* Copy toast notification */}
                   <AnimatePresence>
                     {showToast && (
                       <motion.div
-                        className="absolute right-8 mt-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs"
+                        className="relative mt-2 ml-auto inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs"
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
