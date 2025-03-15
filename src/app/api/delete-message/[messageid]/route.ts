@@ -3,21 +3,20 @@ export const runtime = 'nodejs';
 import UserModel from '@/model/User';
 import { getServerSession } from 'next-auth/next';
 import dbConnect from '@/lib/dbConnect';
-import { User } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
-import type { NextRequest } from 'next/server';
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { messageid: string } }
+  request: Request,
+  { params, searchParams }: { 
+    params: { messageid: string }; 
+    searchParams: { [key: string]: string | string[] | undefined }; 
+  }
 ) {
-  // Get messageid from path parameters, not query parameters
   const messageId = params.messageid;
   
   await dbConnect();
   const session = await getServerSession(authOptions);
-  const _user: User = session?.user;
-  if (!session || !_user) {
+  if (!session || !session.user) {
     return new Response(
       JSON.stringify({ success: false, message: 'Not authenticated' }),
       { status: 401 }
@@ -26,7 +25,7 @@ export async function DELETE(
 
   try {
     const updateResult = await UserModel.updateOne(
-      { _id: _user._id },
+      { _id: session.user._id },
       { $pull: { messages: { _id: messageId } } }
     );
 
