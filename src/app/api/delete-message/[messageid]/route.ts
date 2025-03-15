@@ -5,6 +5,12 @@ import { User } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
 import type { NextRequest } from 'next/server';
 
+// Define a custom user type that includes MongoDB _id
+interface UserWithId extends User {
+  _id: string;
+  username?: string;
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { messageid: string } }
@@ -14,7 +20,10 @@ export async function DELETE(
   
   await dbConnect();
   const session = await getServerSession(authOptions);
-  const _user: User = session?.user;
+  
+  // Cast the user to our extended type
+  const _user = session?.user as UserWithId | undefined;
+  
   if (!session || !_user) {
     return new Response(
       JSON.stringify({ success: false, message: 'Not authenticated' }),
