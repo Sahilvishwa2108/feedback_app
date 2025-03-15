@@ -10,9 +10,12 @@ interface ExtendedUser extends User {
   _id: string;
 }
 
+// Define the params type specifically for this route handler
+type MessageIdParams = { messageid: string };
+
 export async function DELETE(
   request: NextRequest,
-  { params }: any
+  { params }: { params: MessageIdParams }
 ): Promise<NextResponse> {
   try {
     await dbConnect();
