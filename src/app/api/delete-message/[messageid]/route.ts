@@ -4,7 +4,6 @@ import dbConnect from "@/lib/dbConnect";
 import { User } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { NextRequest, NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
 
 // Define a custom user type that includes MongoDB _id
 interface ExtendedUser extends User {
