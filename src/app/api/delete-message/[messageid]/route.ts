@@ -7,18 +7,13 @@ import { authOptions } from '../../auth/[...nextauth]/options';
 
 export async function DELETE(
   request: Request,
-  { params, searchParams }: { 
-    params: { messageid: string }; 
-    searchParams: Record<string, string | string[] | undefined>;
-  }
-) {
-  // Reference searchParams to prevent ESLint unused-variable error
-  void searchParams;
-
+  { params }: { params: { messageid: string } }
+): Promise<Response> {
   const messageId = params.messageid;
   
   await dbConnect();
   const session = await getServerSession(authOptions);
+  
   if (!session || !session.user) {
     return new Response(
       JSON.stringify({ success: false, message: 'Not authenticated' }),
