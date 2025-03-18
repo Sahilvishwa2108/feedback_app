@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import messages from '@/messages.json';
-
 // Fix for the Particles component to avoid hydration errors
 
 // Particles for background effect
@@ -141,18 +140,6 @@ const featureVariants = {
     transition: { 
       duration: 0.2 
     }
-  }
-};
-
-// Footer animations
-const footerItemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      duration: 0.5 
-    } 
   }
 };
 
@@ -449,6 +436,7 @@ export default function Home() {
                 <motion.div 
                   className="w-12 h-12 mx-auto mb-4 rounded-full bg-purple-900/50 flex items-center justify-center"
                   whileHover={{ rotate: 360, transition: { duration: 0.7 } }}
+                  animate={{ rotate: 0 }} // Ensure the icon resets to initial state
                 >
                   {feature.icon}
                 </motion.div>
@@ -493,190 +481,6 @@ export default function Home() {
           </motion.div>
         </motion.div>
       </main>
-
-      {/* Enhanced footer with animation */}
-      <motion.footer 
-        className="bg-gray-900 text-gray-300 relative overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 0.7 }}
-      >
-        {/* Animated background element */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-purple-900/10 to-indigo-900/10"
-          animate={{ 
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{ 
-            duration: 20, 
-            repeat: Infinity, 
-            repeatType: "reverse" 
-          }}
-        />
-        
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Brand section */}
-            <motion.div variants={footerItemVariants} className="col-span-1 md:col-span-1">
-              <motion.div 
-                className="flex items-center space-x-2 mb-4"
-                whileHover={{ scale: 1.05 }}
-              >
-                <motion.div
-                  animate={{ 
-                    rotate: [0, 10, -10, 10, 0],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ duration: 5, repeat: Infinity }}
-                >
-                  <MessageSquare className="h-8 w-8 text-purple-400" />
-                </motion.div>
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">
-                  True Feedback
-                </span>
-              </motion.div>
-              <p className="text-sm text-gray-400 mb-4">
-                The anonymous feedback platform where truth flows freely and identities remain hidden.
-              </p>
-            </motion.div>
-
-            {/* Quick links */}
-            <motion.div variants={footerItemVariants} className="col-span-1">
-              <h3 className="text-lg font-semibold mb-4 text-purple-300">Platform</h3>
-              <ul className="space-y-2">
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    How it works
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Features
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Security
-                  </motion.a>
-                </li>
-              </ul>
-            </motion.div>
-
-            {/* Legal */}
-            <motion.div variants={footerItemVariants} className="col-span-1">
-              <h3 className="text-lg font-semibold mb-4 text-purple-300">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Privacy Policy
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Terms of Service
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Cookie Policy
-                  </motion.a>
-                </li>
-              </ul>
-            </motion.div>
-
-            {/* Connect */}
-            <motion.div variants={footerItemVariants} className="col-span-1">
-              <h3 className="text-lg font-semibold mb-4 text-purple-300">Connect</h3>
-              <ul className="space-y-2">
-                <li>
-                  <motion.a 
-                    href="https://github.com/sahilvishwa2108/feedback_app" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-purple-300 transition-colors flex items-center"
-                    whileHover={{ x: 5 }}
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.934.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.16 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
-                    </svg>
-                    GitHub
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Contact Us
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a 
-                    href="#" 
-                    className="text-gray-400 hover:text-purple-300 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    Support
-                  </motion.a>
-                </li>
-              </ul>
-            </motion.div>
-          </div>
-
-          {/* Bottom section */}
-          <motion.div 
-            className="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6 }}
-          >
-            <p className="text-sm text-gray-500 mb-4 md:mb-0">
-              © {currentYear || "2025"} True Feedback. All rights reserved. Share thoughts, stay anonymous.
-            </p>
-            <motion.div 
-              className="flex space-x-4"
-              variants={containerVariants}
-            >
-              {['Twitter', 'Instagram', 'LinkedIn'].map((social, index) => (
-                <motion.a 
-                  key={index}
-                  href="#"
-                  className="text-gray-500 hover:text-purple-300 transition-colors"
-                  whileHover={{ scale: 1.2, y: -2 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {social}
-                </motion.a>
-              ))}
-            </motion.div>
-          </motion.div>
-        </div>
-      </motion.footer>
     </>
   );
 }
