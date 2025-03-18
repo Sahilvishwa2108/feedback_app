@@ -1,100 +1,717 @@
 [
-  "If you could master any skill instantly, what would it be and why?",
-  "What's a book or movie that changed your perspective on something important?",
-  "What small thing consistently brings you joy in your daily life?",
-  "If you could have dinner with anyone from history, who would you choose?",
-  "What's something you're proud of that you rarely get to talk about?",
-  "What's an unusual food combination that you love but others might find strange?",
-  "If you could live anywhere in the world for a year, where would it be?",
-  "What's a hobby or interest you've always wanted to pursue but haven't yet?",
-  "What's the best piece of advice you've ever received?",
-  "If you could witness any event in history, what would you choose to see?",
-  "What's something you've changed your mind about in the last few years?",
-  "What's a small act of kindness someone did for you that you'll never forget?",
-  "What fictional world or place would you most like to visit?",
-  "What's something that seems obvious to you but others don't seem to understand?",
-  "If you had an extra hour every day, how would you use it?",
-  "What's a skill you have that not many people know about?",
-  "What's something you wish you had learned earlier in life?",
-  "What's a question you've always wanted to be asked?",
-  "What's a tradition or ritual that is special to you?",
-  "If you could solve one world problem, which would you choose and why?",
-  "What's something you've done that you never thought you'd be able to do?",
-  "What's a song that always puts you in a good mood?",
-  "What's the most beautiful place you've ever visited?",
-  "What's something you're looking forward to in the future?",
-  "What's a dream you have that you haven't pursued yet?",
-  "What's something unexpected that brings you peace?",
-  "What's the most memorable gift you've ever received?",
-  "What's a hobby that has taught you something valuable?",
-  "If you could instantly become fluent in any language, which would you choose?",
-  "What's a challenge you've overcome that made you stronger?",
-  "What's something you've created that you're proud of?",
-  "What's a question that has no answer but is worth asking?",
-  "What's a small change you've made that had a big impact on your life?",
-  "What's a subject you know very little about but would like to learn?",
-  "What's something you enjoy that most people would consider mundane?",
-  "What's a moment from your life that you wish you could relive?",
-  "What's something that initially scared you but you did anyway?",
-  "What's a simple pleasure you never get tired of?",
-  "What's the most interesting conversation you've had recently?",
-  "What's a project or goal you're currently working on?",
-  "What's a rule you think should be broken more often?",
-  "What's a lesson life has taught you that you'd like to share?",
-  "What's a topic you could talk about for hours?",
-  "What's something people might be surprised to learn about you?",
-  "What's a belief or opinion you've recently reconsidered?",
-  "What's a question you've been pondering lately?",
-  "What's a memory that always makes you smile?",
-  "What's something that's better than most people give it credit for?",
-  "What's something you're grateful for today?",
-  "What's an experience that changed how you view the world?",
-  "What's something you're curious about but haven't explored yet?",
-  "What's a compliment you've received that you'll never forget?",
-  "What's a piece of technology or innovation that you find fascinating?",
-  "What's a habit you're trying to develop or break?",
-  "What's something you'd like to be remembered for?",
-  "What's a question you wish people would ask you more often?",
-  "What's a talent or ability you admire in others?",
-  "What's something you're learning or trying to understand better?",
-  "What's a misconception people often have about you?",
-  "What's a small victory you've had recently that you're proud of?",
-  "What's a place you've never been to but would love to visit?",
-  "What's something you collect or would like to start collecting?",
-  "What's a decision you've made that you're particularly happy about?",
-  "What's a quote or saying that resonates with you deeply?",
-  "What's something you find beautiful that others might not notice?",
-  "What's an aspect of your culture or heritage that's meaningful to you?",
-  "What's a challenge you're facing right now?",
-  "What's something unexpected that you find fascinating?",
-  "What's a book you think everyone should read at least once?",
-  "What's a skill you'd like to improve or master?",
-  "What's a misconception you had that was later corrected?",
-  "What's a piece of music that moves you emotionally?",
-  "What's a tradition you'd like to start or continue?",
-  "What's something you believe that most people don't?",
-  "What's a question that helps you learn the most about someone?",
-  "What's something that makes you feel like a kid again?",
-  "What's a small luxury you appreciate in your daily life?",
-  "What's a personal rule or principle you try to live by?",
-  "What's something you've been meaning to try but haven't yet?",
-  "What's a hidden gem (place, book, movie) more people should know about?",
-  "What's a fear you've conquered or are working to overcome?",
-  "What's something people often get wrong about your field of work or study?",
-  "What's a food from your childhood that you still enjoy?",
-  "What's something you've learned about yourself during challenging times?",
-  "What's a story behind an object that's meaningful to you?",
-  "What's a seemingly small decision that had a big impact on your life?",
-  "What's an experience that taught you an important life lesson?",
-  "What's a habit that has improved your life significantly?",
-  "What's a question you've always wanted to ask someone but never have?",
-  "What's something you do to show kindness to others?",
-  "What's a dream or goal that you haven't shared with many people?",
-  "What's something you wish you could experience for the first time again?",
-  "What's a topic you've changed your stance on over time?",
-  "What's something that always fascinates you, no matter how many times you encounter it?",
-  "What's a quality in people that you're drawn to?",
-  "What's a recent discovery that made you excited or intrigued?",
-  "What's a puzzle or mystery you'd love to solve?",
-  "What's something that consistently restores your faith in humanity?"
+  {
+    "id": 1,
+    "category": "Skills",
+    "message": "Your ability to adapt and learn is truly remarkable."
+  },
+  {
+    "id": 2,
+    "category": "Skills",
+    "message": "You excel at mastering new skills quickly. It's inspiring!"
+  },
+  {
+    "id": 3,
+    "category": "Skills",
+    "message": "Your expertise in [specific skill] is a game-changer."
+  },
+  {
+    "id": 4,
+    "category": "Skills",
+    "message": "You have a knack for solving complex problems effortlessly."
+  },
+  {
+    "id": 5,
+    "category": "Skills",
+    "message": "Your technical skills are unmatched. Keep it up!"
+  },
+  {
+    "id": 6,
+    "category": "Skills",
+    "message": "You bring a unique skill set that adds immense value."
+  },
+  {
+    "id": 7,
+    "category": "Skills",
+    "message": "Your attention to detail is exceptional."
+  },
+  {
+    "id": 8,
+    "category": "Skills",
+    "message": "You have a natural talent for [specific skill]."
+  },
+  {
+    "id": 9,
+    "category": "Skills",
+    "message": "Your dedication to honing your skills is inspiring."
+  },
+  {
+    "id": 10,
+    "category": "Skills",
+    "message": "You consistently demonstrate mastery in your work."
+  },
+  {
+    "id": 11,
+    "category": "Skills",
+    "message": "You excel at identifying and addressing key challenges."
+  },
+  {
+    "id": 12,
+    "category": "Skills",
+    "message": "Your ability to manage multiple tasks efficiently is remarkable."
+  },
+  {
+    "id": 13,
+    "category": "Skills",
+    "message": "You have a natural ability to inspire confidence in others."
+  },
+  {
+    "id": 14,
+    "category": "Skills",
+    "message": "Your ability to adapt to new tools and technologies is impressive."
+  },
+  {
+    "id": 15,
+    "category": "Skills",
+    "message": "You have a unique ability to simplify complex concepts."
+  },
+  {
+    "id": 16,
+    "category": "Skills",
+    "message": "Your organizational skills are second to none."
+  },
+  {
+    "id": 17,
+    "category": "Skills",
+    "message": "You consistently deliver high-quality results."
+  },
+  {
+    "id": 18,
+    "category": "Skills",
+    "message": "Your ability to think strategically is a great asset."
+  },
+  {
+    "id": 19,
+    "category": "Skills",
+    "message": "You have a talent for identifying opportunities for growth."
+  },
+  {
+    "id": 20,
+    "category": "Skills",
+    "message": "Your ability to remain calm and focused is admirable."
+  },
+  {
+    "id": 21,
+    "category": "Skills",
+    "message": "You have a strong ability to prioritize tasks effectively."
+  },
+  {
+    "id": 22,
+    "category": "Skills",
+    "message": "Your technical expertise is a valuable resource for the team."
+  },
+  {
+    "id": 23,
+    "category": "Skills",
+    "message": "You consistently exceed expectations with your skill set."
+  },
+  {
+    "id": 24,
+    "category": "Skills", 
+    "message": "Few people demonstrate the level of expertise you bring to [specific skill]."
+  },
+  {
+    "id": 25,
+    "category": "Skills",
+    "message": "The way you approach technical challenges shows remarkable ingenuity."
+  },
+  {
+    "id": 26,
+    "category": "Skills",
+    "message": "It's impressive how quickly you master new concepts and apply them."
+  },
+  {
+    "id": 27,
+    "category": "Perspective",
+    "message": "Your perspective on challenges is refreshing."
+  },
+  {
+    "id": 28,
+    "category": "Perspective",
+    "message": "You always bring a thoughtful viewpoint to discussions."
+  },
+  {
+    "id": 29,
+    "category": "Perspective",
+    "message": "Your insights on [specific topic] are eye-opening."
+  },
+  {
+    "id": 30,
+    "category": "Perspective",
+    "message": "You have a unique way of seeing the bigger picture."
+  },
+  {
+    "id": 31,
+    "category": "Perspective",
+    "message": "Your ability to think critically is impressive."
+  },
+  {
+    "id": 32,
+    "category": "Perspective",
+    "message": "You challenge others to think differently. Thank you!"
+  },
+  {
+    "id": 33,
+    "category": "Perspective",
+    "message": "Your open-mindedness is a rare and valuable trait."
+  },
+  {
+    "id": 34,
+    "category": "Perspective",
+    "message": "You bring clarity to complex situations."
+  },
+  {
+    "id": 35,
+    "category": "Perspective",
+    "message": "Your perspective helps others grow and learn."
+  },
+  {
+    "id": 36,
+    "category": "Perspective",
+    "message": "You inspire others to see things in a new light."
+  },
+  {
+    "id": 37,
+    "category": "Perspective",
+    "message": "Discussions are always enriched by the unique viewpoints you bring."
+  },
+  {
+    "id": 38,
+    "category": "Perspective",
+    "message": "There's something refreshing about how you approach challenges from different angles."
+  },
+  {
+    "id": 39,
+    "category": "Perspective",
+    "message": "Many have noted how your insights transform our understanding of [specific topic]."
+  },
+  {
+    "id": 40,
+    "category": "Creativity",
+    "message": "Your creative ideas always stand out."
+  },
+  {
+    "id": 41,
+    "category": "Creativity",
+    "message": "You have a gift for thinking outside the box."
+  },
+  {
+    "id": 42,
+    "category": "Creativity",
+    "message": "Your innovative solutions are truly inspiring."
+  },
+  {
+    "id": 43,
+    "category": "Creativity",
+    "message": "You bring fresh ideas to every project."
+  },
+  {
+    "id": 44,
+    "category": "Creativity",
+    "message": "Your imagination knows no bounds."
+  },
+  {
+    "id": 45,
+    "category": "Creativity",
+    "message": "You make even the simplest things creative."
+  },
+  {
+    "id": 46,
+    "category": "Creativity",
+    "message": "Your artistic approach is always impressive."
+  },
+  {
+    "id": 47,
+    "category": "Creativity",
+    "message": "You inspire others with your creative energy."
+  },
+  {
+    "id": 48,
+    "category": "Creativity",
+    "message": "Your creativity turns challenges into opportunities."
+  },
+  {
+    "id": 49,
+    "category": "Creativity",
+    "message": "You have a unique way of bringing ideas to life."
+  },
+  {
+    "id": 50,
+    "category": "Creativity",
+    "message": "That creative solution for [specific challenge] was brilliant and unexpected."
+  },
+  {
+    "id": 51,
+    "category": "Creativity",
+    "message": "Innovation seems to come naturally in everything you touch."
+  },
+  {
+    "id": 52,
+    "category": "Creativity",
+    "message": "Working with someone who thinks so far outside the box is truly inspiring."
+  },
+  {
+    "id": 53,
+    "category": "Motivation",
+    "message": "Your drive and determination are contagious."
+  },
+  {
+    "id": 54,
+    "category": "Motivation",
+    "message": "You inspire others to push their limits."
+  },
+  {
+    "id": 55,
+    "category": "Motivation",
+    "message": "Your energy motivates everyone around you."
+  },
+  {
+    "id": 56,
+    "category": "Motivation",
+    "message": "You never give up, even in tough situations."
+  },
+  {
+    "id": 57,
+    "category": "Motivation",
+    "message": "Your passion for success is truly inspiring."
+  },
+  {
+    "id": 58,
+    "category": "Motivation",
+    "message": "You lead by example and inspire others to follow."
+  },
+  {
+    "id": 59,
+    "category": "Motivation",
+    "message": "Your resilience is a source of inspiration."
+  },
+  {
+    "id": 60,
+    "category": "Motivation",
+    "message": "You bring positivity and motivation to the team."
+  },
+  {
+    "id": 61,
+    "category": "Motivation",
+    "message": "Your focus and dedication are admirable."
+  },
+  {
+    "id": 62,
+    "category": "Motivation",
+    "message": "You inspire others to believe in themselves."
+  },
+  {
+    "id": 63,
+    "category": "Motivation",
+    "message": "The energy you bring to challenges motivates everyone around you."
+  },
+  {
+    "id": 64,
+    "category": "Motivation",
+    "message": "Even during difficult times, your determination never seems to waver."
+  },
+  {
+    "id": 65,
+    "category": "Motivation",
+    "message": "Thanks for always bringing a positive attitude that lifts the entire team."
+  },
+  {
+    "id": 66,
+    "category": "Teamwork",
+    "message": "You are a true team player."
+  },
+  {
+    "id": 67,
+    "category": "Teamwork",
+    "message": "Your collaboration skills are exceptional."
+  },
+  {
+    "id": 68,
+    "category": "Teamwork",
+    "message": "You bring people together and foster teamwork."
+  },
+  {
+    "id": 69,
+    "category": "Teamwork",
+    "message": "You create a positive and inclusive team environment."
+  },
+  {
+    "id": 70,
+    "category": "Teamwork",
+    "message": "Your ability to work with others is impressive."
+  },
+  {
+    "id": 71,
+    "category": "Teamwork",
+    "message": "You always put the team's success first."
+  },
+  {
+    "id": 72,
+    "category": "Teamwork",
+    "message": "You encourage open communication within the team."
+  },
+  {
+    "id": 73,
+    "category": "Teamwork",
+    "message": "You help others feel valued and included."
+  },
+  {
+    "id": 74,
+    "category": "Teamwork",
+    "message": "You inspire teamwork and collaboration in every project."
+  },
+  {
+    "id": 75,
+    "category": "Teamwork",
+    "message": "[Specific example of teamwork] showcases your skills."
+  },
+  {
+    "id": 76,
+    "category": "Teamwork",
+    "message": "Teams function better with someone who collaborates as effectively as you do."
+  },
+  {
+    "id": 77,
+    "category": "Teamwork",
+    "message": "It's remarkable how you always find ways to include everyone's input."
+  },
+  {
+    "id": 78,
+    "category": "Teamwork",
+    "message": "Working alongside you makes team projects more enjoyable and effective."
+  },
+  {
+    "id": 79,
+    "category": "Leadership",
+    "message": "You lead with integrity and inspire others to follow."
+  },
+  {
+    "id": 80,
+    "category": "Leadership",
+    "message": "Your leadership style is both effective and inspiring."
+  },
+  {
+    "id": 81,
+    "category": "Leadership",
+    "message": "You empower others to take ownership of their work."
+  },
+  {
+    "id": 82,
+    "category": "Leadership",
+    "message": "Your vision for the team is clear and motivating."
+  },
+  {
+    "id": 83,
+    "category": "Leadership",
+    "message": "You are a natural leader who inspires confidence."
+  },
+  {
+    "id": 84,
+    "category": "Leadership",
+    "message": "[Specific example of leadership] demonstrates your skills."
+  },
+  {
+    "id": 85,
+    "category": "Leadership",
+    "message": "[Specific example of leadership] showcases your skills."
+  },
+  {
+    "id": 86,
+    "category": "Leadership",
+    "message": "You create a culture of trust and respect."
+  },
+  {
+    "id": 87,
+    "category": "Leadership",
+    "message": "You inspire others to reach their full potential."
+  },
+  {
+    "id": 88,
+    "category": "Leadership",
+    "message": "Your leadership is a driving force for success."
+  },
+  {
+    "id": 89,
+    "category": "Leadership",
+    "message": "The way you lead inspires confidence and brings out the best in everyone."
+  },
+  {
+    "id": 90,
+    "category": "Leadership",
+    "message": "Great leaders listen first, and that's exactly what you consistently do."
+  },
+  {
+    "id": 91,
+    "category": "Leadership",
+    "message": "During [specific situation], your leadership made all the difference in our success."
+  },
+  {
+    "id": 92,
+    "category": "Communication",
+    "message": "Your communication skills are top-notch."
+  },
+  {
+    "id": 93,
+    "category": "Communication",
+    "message": "You express your ideas clearly and effectively."
+  },
+  {
+    "id": 94,
+    "category": "Communication",
+    "message": "You listen actively and respond thoughtfully."
+  },
+  {
+    "id": 95,
+    "category": "Communication",
+    "message": "Your ability to convey complex ideas is impressive."
+  },
+  {
+    "id": 96,
+    "category": "Communication",
+    "message": "[Specific example of communication] showcases your skills."
+  },
+  {
+    "id": 97,
+    "category": "Communication",
+    "message": "[Specific example of communication] demonstrates your skills."
+  },
+  {
+    "id": 98,
+    "category": "Communication",
+    "message": "[Specific example of communication] highlights your skills."
+  },
+  {
+    "id": 99,
+    "category": "Communication",
+    "message": "[Specific example of communication] illustrates your skills."
+  },
+  {
+    "id": 100,
+    "category": "Communication",
+    "message": "[Specific example of communication] exemplifies your skills."
+  },
+  {
+    "id": 101,
+    "category": "Communication",
+    "message": "[Specific example of communication] reflects your skills."
+  },
+  {
+    "id": 102,
+    "category": "Communication",
+    "message": "Messages from you are always clear, concise, and thoughtful."
+  },
+  {
+    "id": 103,
+    "category": "Communication",
+    "message": "There's an art to communicating complex ideas simply, and you've mastered it."
+  },
+  {
+    "id": 104,
+    "category": "Communication",
+    "message": "Conversations with you are always productive and insightful."
+  },
+  {
+    "id": 105,
+    "category": "Collaboration",
+    "message": "You collaborate effectively with others."
+  },
+  {
+    "id": 106,
+    "category": "Collaboration",
+    "message": "You foster a spirit of collaboration in the team."
+  },
+  {
+    "id": 107,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] showcases your skills."
+  },
+  {
+    "id": 108,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] demonstrates your skills."
+  },
+  {
+    "id": 109,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] highlights your skills."
+  },
+  {
+    "id": 110,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] illustrates your skills."
+  },
+  {
+    "id": 111,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] exemplifies your skills."
+  },
+  {
+    "id": 112,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] reflects your skills."
+  },
+  {
+    "id": 113,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] showcases your skills."
+  },
+  {
+    "id": 114,
+    "category": "Collaboration",
+    "message": "[Specific example of collaboration] demonstrates your skills."
+  },
+  {
+    "id": 115,
+    "category": "Collaboration",
+    "message": "Together with you, projects move forward more smoothly and effectively."
+  },
+  {
+    "id": 116,
+    "category": "Collaboration",
+    "message": "Collaboration becomes natural and effective when you're involved."
+  },
+  {
+    "id": 117,
+    "category": "Collaboration",
+    "message": "Throughout our collaboration on [specific project], your contributions were invaluable."
+  },
+  {
+    "id": 118,
+    "category": "Problem-Solving",
+    "message": "Your problem-solving skills are exceptional."
+  },
+  {
+    "id": 119,
+    "category": "Problem-Solving",
+    "message": "You approach challenges with a clear and logical mindset."
+  },
+  {
+    "id": 120,
+    "category": "Problem-Solving",
+    "message": "Your ability to find innovative solutions is impressive."
+  },
+  {
+    "id": 121,
+    "category": "Problem-Solving",
+    "message": "You excel at breaking down complex problems into manageable steps."
+  },
+  {
+    "id": 122,
+    "category": "Problem-Solving",
+    "message": "Your analytical thinking is a valuable asset."
+  },
+  {
+    "id": 123,
+    "category": "Problem-Solving",
+    "message": "You consistently find effective solutions to tough problems."
+  },
+  {
+    "id": 124,
+    "category": "Problem-Solving",
+    "message": "Your resourcefulness in problem-solving is inspiring."
+  },
+  {
+    "id": 125,
+    "category": "Problem-Solving",
+    "message": "You tackle challenges with determination and creativity."
+  },
+  {
+    "id": 126,
+    "category": "Problem-Solving",
+    "message": "Your ability to think critically is a major strength."
+  },
+  {
+    "id": 127,
+    "category": "Problem-Solving",
+    "message": "You turn obstacles into opportunities with ease."
+  },
+  {
+    "id": 128,
+    "category": "Problem-Solving",
+    "message": "Challenges that stump others seem to find solutions when they reach you."
+  },
+  {
+    "id": 129,
+    "category": "Problem-Solving",
+    "message": "The approach you took to solve [specific problem] was both elegant and effective."
+  },
+  {
+    "id": 130,
+    "category": "Problem-Solving",
+    "message": "It's remarkable how you can break down complex problems into manageable steps."
+  },
+  {
+    "id": 131,
+    "category": "Empathy",
+    "message": "Your empathy towards others is truly admirable."
+  },
+  {
+    "id": 132,
+    "category": "Empathy",
+    "message": "You always take the time to understand others' perspectives."
+  },
+  {
+    "id": 133,
+    "category": "Empathy",
+    "message": "Your kindness and compassion make a difference."
+  },
+  {
+    "id": 134,
+    "category": "Empathy",
+    "message": "You create a safe and supportive environment for others."
+  },
+  {
+    "id": 135,
+    "category": "Empathy",
+    "message": "Your ability to connect with others on a personal level is remarkable."
+  },
+  {
+    "id": 136,
+    "category": "Empathy",
+    "message": "You show genuine care and concern for those around you."
+  },
+  {
+    "id": 137,
+    "category": "Empathy",
+    "message": "Your understanding and patience are greatly appreciated."
+  },
+  {
+    "id": 138,
+    "category": "Empathy",
+    "message": "You inspire others with your compassionate nature."
+  },
+  {
+    "id": 139,
+    "category": "Empathy",
+    "message": "Your ability to empathize strengthens relationships."
+  },
+  {
+    "id": 140,
+    "category": "Empathy",
+    "message": "You make others feel valued and understood."
+  },
+  {
+    "id": 141,
+    "category": "Empathy",
+    "message": "Everyone feels heard and understood when interacting with you."
+  },
+  {
+    "id": 142,
+    "category": "Empathy",
+    "message": "The way you handle sensitive situations shows exceptional emotional intelligence."
+  },
+  {
+    "id": 143,
+    "category": "Empathy",
+    "message": "Few people demonstrate the level of understanding and compassion that you do."
+  }
 ]

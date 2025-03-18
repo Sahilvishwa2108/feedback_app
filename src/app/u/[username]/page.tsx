@@ -1,13 +1,21 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import axios, { AxiosError } from 'axios';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Loader2, Send, Sparkles, MessageSquare, Wand2, User, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { CardHeader, CardContent, Card } from '@/components/ui/card';
+import React, { useState, useEffect, useRef } from "react";
+import axios, { AxiosError } from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Loader2,
+  Send,
+  MessageSquare,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CardHeader, CardContent, Card } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -15,300 +23,262 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import * as z from 'zod';
-import { ApiResponse } from '@/types/ApiResponse';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { messageSchema } from '@/schemas/messageSchema';
-import { motion, AnimatePresence } from 'framer-motion';
-import suggestedMessages from '@/suggested-messages.json';
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import * as z from "zod";
+import { ApiResponse } from "@/types/ApiResponse";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { messageSchema } from "@/schemas/messageSchema";
+import { motion, AnimatePresence } from "framer-motion";
+import suggestedMessages from "@/suggested-messages.json";
 
-const specialChar = '||';
+const specialChar = "||";
 
 // Parse the message string into an array of messages
 const parseStringMessages = (messageString: string): string[] => {
   return messageString.split(specialChar);
 };
 
-// Function to get random messages from the JSON file
-const getRandomMessages = (count: number = 3): string => {
-  // Create a copy of the array to avoid modifying the original
-  const messagesCopy = [...suggestedMessages];
+// Get unique categories from the JSON file
+const getUniqueCategories = (): string[] => {
+  const categories = suggestedMessages.map((message) => message.category);
+  return ["All", ...Array.from(new Set(categories))];
+};
+
+// Function to get random messages from the JSON file filtered by category
+const getRandomMessages = (
+  count: number = 4,
+  category: string = "All"
+): string => {
+  const filteredMessages =
+    category === "All"
+      ? suggestedMessages
+      : suggestedMessages.filter((msg) => msg.category === category);
+
+  if (filteredMessages.length === 0) {
+    return "";
+  }
+
+  const messagesCopy = [...filteredMessages];
   const selectedMessages: string[] = [];
-  
-  // Select random messages
-  for (let i = 0; i < count; i++) {
+
+  for (let i = 0; i < Math.min(count, messagesCopy.length); i++) {
     if (messagesCopy.length === 0) break;
-    
+
     const randomIndex = Math.floor(Math.random() * messagesCopy.length);
-    selectedMessages.push(messagesCopy[randomIndex]);
-    
-    // Remove the selected message to avoid duplicates
+    selectedMessages.push(messagesCopy[randomIndex].message);
     messagesCopy.splice(randomIndex, 1);
   }
-  
-  // Join messages with the special character
+
   return selectedMessages.join(specialChar);
 };
 
-// Initial message string now uses random messages from the JSON file
-const initialMessageString = getRandomMessages(3);
-
-// Enhanced animations with more dramatic effects
+// Enhanced animations
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { 
-      type: "spring", 
-      stiffness: 300, 
-      damping: 24 
-    } 
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 24 },
   },
-  hover: {
-    scale: 1.03,
-    boxShadow: "0 8px 30px rgba(88, 80, 236, 0.25)",
-    transition: { duration: 0.2 }
-  },
-  tap: { scale: 0.98 }
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 },
 };
 
-// Deep Space Starfield Background
-const DarkStarfield = () => {
-  const [isClient, setIsClient] = useState(false);
+// Enhanced background with trending gradient ball
+const EnhancedBackground = () => {
+  const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
   
-  if (!isClient) return null;
-  
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Smaller distant stars */}
-      {Array.from({ length: 100 }).map((_, i) => {
-        const size = Math.random() * 1.5 + 0.5;
-        const opacity = Math.random() * 0.5 + 0.1;
-        
-        return (
-          <motion.div
-            key={`star-${i}`}
-            className="absolute rounded-full bg-blue-100"
-            style={{
-              width: size,
-              height: size,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity,
-              boxShadow: `0 0 ${Math.random() * 2 + 1}px rgba(255, 255, 255, ${opacity})`,
-            }}
-            animate={{
-              opacity: [opacity, opacity * 1.5, opacity],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              repeatType: "mirror",
-              delay: Math.random() * 5,
-            }}
-          />
-        );
-      })}
-      
-      {/* Distant nebula clouds */}
-      {[...Array(3)].map((_, i) => (
-        <motion.div
-          key={`nebula-${i}`}
-          className="absolute rounded-full opacity-10 blur-3xl"
-          style={{
-            width: `${Math.random() * 40 + 30}%`,
-            height: `${Math.random() * 40 + 30}%`,
-            background: `radial-gradient(circle at center, 
-              rgba(30, 27, 75, 0.8), 
-              rgba(15, 23, 42, 0.2))`,
-            top: `${Math.random() * 80}%`,
-            left: `${Math.random() * 80}%`,
-            transform: `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`,
-          }}
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.08, 0.11, 0.08],
-            rotate: [`${Math.random() * 360}deg`, `${Math.random() * 360 + 20}deg`],
-          }}
-          transition={{
-            duration: 20 + i * 5,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-  );
-};
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      {/* Lighter gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#170B36] via-[#1F0E4A] to-[#180B3D]" />
 
-// Subtle Grid Lines
-const SubtleGrid = () => {
-  const [isClient, setIsClient] = useState(false);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  if (!isClient) return null;
-  
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Horizontal lines */}
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={`h-${i}`}
-          className="absolute h-px w-full bg-gradient-to-r from-transparent via-indigo-900/10 to-transparent"
-          style={{
-            top: `${(i+1) * 12.5}%`,
-            left: 0,
-          }}
-          animate={{
-            opacity: [0.03, 0.07, 0.03],
-            backgroundPosition: ['0% 0%', '100% 0%'],
-          }}
-          transition={{
-            duration: 20 + i * 3,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-      ))}
-      
-      {/* Vertical lines */}
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={`v-${i}`}
-          className="absolute w-px h-full bg-gradient-to-b from-transparent via-indigo-900/10 to-transparent"
-          style={{
-            left: `${(i+1) * 12.5}%`,
-            top: 0,
-          }}
-          animate={{
-            opacity: [0.03, 0.07, 0.03],
-            backgroundPosition: ['0% 0%', '0% 100%'],
-          }}
-          transition={{
-            duration: 25 + i * 3,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-      ))}
-    </div>
-  );
-};
+      {/* Trending Gradient Glow Balls */}
+      <motion.div
+        className="absolute rounded-full blur-[100px] opacity-30"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(216, 180, 254, 0.8) 0%, rgba(149, 94, 255, 0.4) 50%, rgba(88, 28, 230, 0.1) 100%)",
+          width: "60vw",
+          height: "60vw",
+          left: "20%",
+          top: "10%",
+        }}
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.2, 0.3, 0.2],
+          x: [0, 20, 0],
+          y: [0, -20, 0],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+        }}
+      />
 
-// Shooting Stars
-const ShootingStars = () => {
-  const [isClient, setIsClient] = useState(false);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-  
-  if (!isClient) return null;
-  
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 5 }).map((_, i) => {
-        const startX = Math.random() * 100;
-        const startY = Math.random() * 100;
-        const angle = Math.random() * 60 + 30; // 30-90 degrees
-        const distance = Math.random() * 30 + 20; // 20-50% of screen
-        
-        // Calculate end position based on angle and distance
-        const radians = (angle * Math.PI) / 180;
-        const endX = startX + distance * Math.cos(radians);
-        const endY = startY - distance * Math.sin(radians); // Negative because Y increases downwards
-        
-        return (
-          <motion.div
-            key={`shooting-star-${i}`}
-            className="absolute w-1 h-1 bg-blue-100 rounded-full"
-            style={{
-              top: `${startY}%`,
-              left: `${startX}%`,
-              boxShadow: "0 0 4px #fff, 0 0 10px #fff",
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              top: [`${startY}%`, `${endY}%`],
-              left: [`${startX}%`, `${endX}%`],
-              opacity: [0, 1, 0],
-              scale: [0, 1, 0],
-              boxShadow: [
-                "0 0 4px rgba(255,255,255,0.1), 0 0 10px rgba(255,255,255,0.1)",
-                "0 0 8px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.8)",
-                "0 0 4px rgba(255,255,255,0.1), 0 0 10px rgba(255,255,255,0.1)"
-              ]
-            }}
-            transition={{
-              duration: Math.random() * 1.5 + 1,
-              delay: Math.random() * 5 + (i * 2),
-              repeat: Infinity,
-              repeatDelay: Math.random() * 15 + 10,
-              ease: "easeOut"
-            }}
-          />
-        );
-      })}
+      {/* Secondary gradient ball */}
+      <motion.div
+        className="absolute rounded-full blur-[120px] opacity-20"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(192, 132, 252, 0.8) 0%, rgba(139, 92, 246, 0.3) 50%, rgba(124, 58, 237, 0.1) 100%)",
+          width: "50vw",
+          height: "50vw",
+          right: "10%",
+          bottom: "5%",
+        }}
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.15, 0.25, 0.15],
+          x: [0, -30, 0],
+          y: [0, 20, 0],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+          delay: 2,
+        }}
+      />
+
+      {/* Simple star field - client side only */}
+      {isMounted && (
+        <>
+          {Array.from({ length: 50 }).map((_, i) => {
+            // Stable randomization with seed based on index
+            const seed = i * 1000;
+            const rng = () => (Math.sin(seed) + 1) / 2;
+
+            const size = rng() * 1.5 + 0.5;
+            const opacity = rng() * 0.7 + 0.3;
+
+            return (
+              <motion.div
+                key={`star-${i}`}
+                className="absolute rounded-full bg-white"
+                style={{
+                  width: size,
+                  height: size,
+                  top: `${rng() * 100}%`,
+                  left: `${rng() * 100}%`,
+                  opacity,
+                  boxShadow: `0 0 ${size * 2}px rgba(255, 255, 255, ${opacity})`,
+                }}
+                animate={{
+                  opacity: [opacity, opacity * 1.5, opacity],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 2 + rng() * 3,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  delay: rng() * 2,
+                }}
+              />
+            );
+          })}
+        </>
+      )}
+
+      {/* Light grid overlay */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(216, 180, 254, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(216, 180, 254, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px",
+        }}
+      />
     </div>
   );
 };
 
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
-  const username = params?.username || 'unknown';
+  const username = params?.username || "unknown";
 
-  // Replace useCompletion hook with local state
-  const [suggestedMessageString, setSuggestedMessageString] = useState<string>(initialMessageString);
+  // State management
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [suggestedMessageString, setSuggestedMessageString] =
+    useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const categoryScrollRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
   });
 
-  const messageContent = form.watch('content');
+  // Load initial messages
+  useEffect(() => {
+    setSuggestedMessageString(getRandomMessages(4, selectedCategory));
+    setIsInitialLoading(false);
+  }, []);
+
+  // Load new messages when category changes
+  useEffect(() => {
+    if (!isInitialLoading) {
+      fetchSuggestedMessages();
+    }
+  }, [selectedCategory]);
+
+  const messageContent = form.watch("content");
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedMessageIndex, setSelectedMessageIndex] = useState<number | null>(null);
+  const [selectedMessageIndex, setSelectedMessageIndex] = useState<
+    number | null
+  >(null);
+
+  // Scroll handlers for category carousel
+  const scrollLeft = () => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
 
   const handleMessageClick = (message: string, index: number) => {
-    form.setValue('content', message);
+    form.setValue("content", message);
     setSelectedMessageIndex(index);
   };
 
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsLoading(true);
     try {
-      const response = await axios.post<ApiResponse>('/api/send-message', {
+      const response = await axios.post<ApiResponse>("/api/send-message", {
         ...data,
         username,
       });
 
       toast.success(response.data.message);
-      form.reset({ ...form.getValues(), content: '' });
+      form.reset({ ...form.getValues(), content: "" });
       setSelectedMessageIndex(null);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -318,364 +288,596 @@ export default function SendMessage() {
     }
   };
 
-  // Updated function to fetch suggested messages locally
+  // Updated function to fetch suggested messages
   const fetchSuggestedMessages = () => {
     setIsRefreshing(true);
-    // Add a slight delay to show the loading state
     setTimeout(() => {
-      setSuggestedMessageString(getRandomMessages(3));
+      setSuggestedMessageString(getRandomMessages(4, selectedCategory));
       setIsRefreshing(false);
     }, 500);
   };
 
+  // Get all unique categories
+  const categories = getUniqueCategories();
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050314] py-16 px-4">
-      {/* Background effects - improved with more mysterious elements */}
-      <DarkStarfield />
-      <SubtleGrid />
-      <ShootingStars />
-      
-      {/* Deep space radial gradient for more depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(49,46,129,0.05),transparent_80%)] pointer-events-none"></div>
-      
+    <div className="relative min-h-screen py-16 px-4">
+      {/* Enhanced background */}
+      <EnhancedBackground />
+
       {/* Main content */}
       <motion.div
-        className="relative z-10 container mx-auto max-w-4xl"
+        className="relative z-10 container mx-auto max-w-3xl"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        {/* Decorative elements - subtler and more mysterious */}
-        <motion.div 
-          className="absolute top-[-100px] right-[-100px] w-[250px] h-[250px] rounded-full bg-indigo-900/5 blur-3xl"
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.15, 0.2, 0.15],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            repeatType: "mirror"
-          }}
-        />
-
-        <motion.div
-          className="mb-14 text-center"
-          variants={itemVariants}
-        >
-          <div className="inline-block relative">
+        {/* Header with username */}
+        <motion.div className="text-center mb-14" variants={itemVariants}>
+          <motion.div
+            className="inline-block mb-4 relative"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <div className="bg-purple-500/20 p-3 rounded-full backdrop-blur-md border border-purple-300/20">
+              <motion.div
+                animate={{ rotate: [0, 5, 0, -5, 0] }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <MessageSquare className="h-7 w-7 text-purple-200" />
+              </motion.div>
+            </div>
             <motion.div
-              className="absolute -inset-6 rounded-full bg-gradient-to-r from-blue-700/20 to-indigo-700/20 blur-xl"
-              animate={{ 
-                rotate: [0, 360],
-                scale: [0.8, 1, 0.8],
+              className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-purple-400"
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0.7, 1, 0.7],
               }}
-              transition={{ duration: 12, repeat: Infinity }}
+              transition={{ duration: 2, repeat: Infinity }}
             />
-            <motion.div 
-              className="relative bg-gradient-to-r from-indigo-600 to-blue-700 p-1.5 rounded-full inline-flex items-center justify-center mb-4"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <User className="h-8 w-8 text-white" />
-            </motion.div>
-          </div>
-          
+          </motion.div>
+
           <motion.h1
-            className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 via-indigo-200 to-blue-300 mb-4"
-            animate={{ 
-              textShadow: [
-                "0 0 8px rgba(99, 102, 241, 0.3)",
-                "0 0 16px rgba(99, 102, 241, 0.5)",
-                "0 0 8px rgba(99, 102, 241, 0.3)",
-              ],
+            className="text-4xl sm:text-5xl font-bold mb-4"
+            style={{
+              background:
+                "linear-gradient(to right, #E9D5FF, #C084FC, #A855F7, #C084FC, #E9D5FF)",
+              backgroundSize: "200% auto",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
-            transition={{ duration: 3, repeat: Infinity }}
+            animate={{ backgroundPosition: ["0% center", "200% center"] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
           >
             @{username}
           </motion.h1>
-          
-          <motion.p className="text-blue-100/70 max-w-lg mx-auto font-light">
-            Share your honest thoughts anonymously. Your identity remains hidden in the shadows, but your message will be heard.
+
+          <motion.p
+            className="text-purple-100 text-lg max-w-lg mx-auto"
+            animate={{ opacity: [0.8, 1, 0.8] }}
+            transition={{ duration: 5, repeat: Infinity, repeatType: "mirror" }}
+          >
+            Share your thoughts anonymously. Your message will be delivered, but
+            your identity remains hidden.
           </motion.p>
+
+          {/* Animated separator */}
+          <motion.div
+            className="w-24 h-0.5 mx-auto rounded-full overflow-hidden mt-6 mb-2"
+            initial={{ width: 0 }}
+            animate={{ width: 96 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <motion.div
+              className="w-full h-full bg-gradient-to-r from-purple-300 via-purple-500 to-purple-300 bg-[length:200%_100%]"
+              animate={{ backgroundPosition: ["0% center", "200% center"] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            />
+          </motion.div>
         </motion.div>
 
-        <motion.div 
-          className="bg-gradient-to-br from-gray-900/90 via-[#0c0a20]/80 to-gray-900/90 rounded-xl p-6 sm:p-8 backdrop-blur-md border border-indigo-900/30 shadow-[0_0_25px_rgba(79,70,229,0.15)]"
+        {/* Message input card */}
+        <motion.div
           variants={itemVariants}
-        >
-          <Form {...form}>
-            <motion.form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
-              variants={containerVariants}
-            >
-              <motion.div variants={itemVariants}>
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-lg text-indigo-100 flex items-center gap-2 mb-2">
-                        <MessageSquare className="h-5 w-5 text-indigo-400" />
-                        <span>Send Anonymous Message</span>
-                      </FormLabel>
-                      <div className="relative group">
-                        <motion.div 
-                          className="absolute -inset-0.5 bg-gradient-to-r from-indigo-600/40 to-blue-600/40 rounded-lg blur opacity-0 group-hover:opacity-100 transition-all duration-700"
-                          animate={{
-                            background: [
-                              "linear-gradient(to right, rgba(79, 70, 229, 0.4), rgba(59, 130, 246, 0.4))",
-                              "linear-gradient(to right, rgba(59, 130, 246, 0.4), rgba(79, 70, 229, 0.4))",
-                              "linear-gradient(to right, rgba(79, 70, 229, 0.4), rgba(59, 130, 246, 0.4))"
-                            ]
-                          }}
-                          transition={{ duration: 8, repeat: Infinity }}
-                        />
-                        <FormControl>
-                          <Textarea
-                            placeholder="Write your anonymous message here..."
-                            className="relative bg-[#0a0821]/80 min-h-[120px] border-indigo-500/20 text-blue-50 focus-visible:ring-indigo-500 focus-visible:border-indigo-500 resize-none placeholder:text-indigo-200/30"
-                            {...field}
-                          />
-                        </FormControl>
-                      </div>
-                      <FormMessage className="text-red-400" />
-                    </FormItem>
-                  )}
-                />
-              </motion.div>
-
-              <motion.div 
-                className="flex justify-center"
-                variants={itemVariants}
-              >
-                <motion.div
-                  whileHover="hover"
-                  whileTap="tap"
-                  variants={itemVariants}
-                >
-                  {isLoading ? (
-                    <Button disabled className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white border-none shadow-[0_4px_20px_rgba(79,70,229,0.3)] px-8">
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
-                    </Button>
-                  ) : (
-                    <Button 
-                      type="submit" 
-                      disabled={isLoading || !messageContent}
-                      className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white border-none shadow-[0_4px_20px_rgba(79,70,229,0.25)] px-8 relative overflow-hidden group"
-                    >
-                      {/* Animated glow effect on hover */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-indigo-400/0 via-indigo-400/30 to-indigo-400/0 opacity-0 group-hover:opacity-100"
-                        animate={{
-                          left: ["-100%", "100%"],
-                        }}
-                        transition={{
-                          repeat: Infinity,
-                          repeatType: "loop",
-                          duration: 1.5,
-                          ease: "easeInOut",
-                        }}
-                      />
-                      
-                      <motion.div
-                        className="flex items-center gap-2 relative z-10"
-                        initial={{ x: 0 }}
-                        whileHover={{ x: 5 }}
-                        transition={{ type: "spring", stiffness: 400 }}
-                      >
-                        <Send className="h-4 w-4" />
-                        Send Anonymously
-                      </motion.div>
-                    </Button>
-                  )}
-                </motion.div>
-              </motion.div>
-            </motion.form>
-          </Form>
-        </motion.div>
-
-        <motion.div 
-          className="mt-12 mb-8" 
-          variants={itemVariants}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
         >
           <motion.div
-            className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6"
-            variants={itemVariants}
+            className="relative"
+            whileHover={{ y: -2 }}
+            transition={{ duration: 0.2 }}
           >
-            <motion.h2 
-              className="text-2xl font-bold text-indigo-100 flex items-center gap-2"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+            {/* Card glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-400 to-violet-400 rounded-xl opacity-20 blur-md" />
+
+            <Card className="bg-white/10 border-purple-300/30 shadow-xl backdrop-blur-lg overflow-hidden relative">
+              <CardHeader className="border-b border-purple-500/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-purple-500/20 p-2 rounded-lg">
+                    <motion.div
+                      animate={{ rotate: [0, 10, 0, -5, 0] }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                      className="text-purple-200"
+                    >
+                      <MessageSquare className="h-5 w-5" />
+                    </motion.div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-purple-100">
+                      Send Anonymous Feedback
+                    </h3>
+                    <p className="text-sm text-purple-200/80">
+                      Your message will remain anonymous
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="pt-6">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="content"
+                      render={({ field }) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel className="text-purple-200 sr-only">
+                            Your Message
+                          </FormLabel>
+                          <FormControl>
+                            <motion.div
+                              className="relative"
+                              whileHover={{
+                                boxShadow: "0 0 15px rgba(216, 180, 254, 0.3)",
+                                transition: { duration: 0.2 },
+                              }}
+                            >
+                              <Textarea
+                                placeholder="Write your feedback here..."
+                                className="min-h-32 bg-white/5 border-purple-300/30 focus-visible:ring-purple-400/50 focus:border-purple-400/50 text-purple-50 placeholder:text-purple-300/40 backdrop-blur-sm"
+                                {...field}
+                              />
+                              <AnimatePresence>
+                                {field.value && (
+                                  <motion.div
+                                    className="absolute bottom-3 right-3 text-xs text-purple-300/70"
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 5 }}
+                                    transition={{ duration: 0.2 }}
+                                  >
+                                    <span className="font-mono">
+                                      {field.value.length}
+                                    </span>{" "}
+                                    / 500
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </motion.div>
+                          </FormControl>
+                          <FormMessage className="text-pink-300" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <motion.div
+                      className="flex justify-end"
+                      whileHover={{ scale: 1.01 }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.03, y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        <Button
+                          type="submit"
+                          className="relative bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-400 hover:to-violet-400 text-white px-6 py-2 overflow-hidden group"
+                          disabled={isLoading}
+                        >
+                          {/* Animated shine effect */}
+                          <motion.div
+                            className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"
+                            initial={false}
+                            animate={{
+                              x: ["-100%", "200%"],
+                              opacity: [0, 0.5, 0],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              repeatDelay: 3,
+                              ease: "easeInOut",
+                            }}
+                          />
+
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="mr-2 h-4 w-4" />
+                              Send Message
+                            </>
+                          )}
+
+                          {/* Subtle particles on hover */}
+                          <AnimatePresence>
+                            {!isLoading && (
+                              <motion.div
+                                className="absolute inset-0 pointer-events-none"
+                                initial={false}
+                                whileHover="visible"
+                              >
+                                {[...Array(3)].map((_, i) => (
+                                  <motion.div
+                                    key={i}
+                                    className="absolute top-1/2 left-1/4 w-1 h-1 bg-white rounded-full"
+                                    variants={{
+                                      visible: {
+                                        opacity: [0, 1, 0],
+                                        y: [0, -10 - i * 5],
+                                        x: [0, 5 - i * 3],
+                                      },
+                                    }}
+                                    transition={{
+                                      duration: 1,
+                                      repeat: Infinity,
+                                      delay: i * 0.2,
+                                    }}
+                                  />
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </Button>
+                      </motion.div>
+                    </motion.div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
+
+        {/* Message suggestions section */}
+        <motion.div
+          className="mt-14"
+          variants={itemVariants}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+            <motion.h2
+              className="text-2xl font-bold text-purple-100 flex items-center gap-2"
+              animate={{
+                textShadow: [
+                  "0 0 0px rgba(216, 180, 254, 0)",
+                  "0 0 8px rgba(216, 180, 254, 0.3)",
+                  "0 0 0px rgba(216, 180, 254, 0)",
+                ],
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
             >
-              <Wand2 className="h-6 w-6 text-indigo-400" />
-              Message Suggestions
+              <motion.div
+                animate={{
+                  rotate: [0, 10, 0, -10, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Sparkles className="h-5 w-5 text-purple-300" />
+              </motion.div>
+              Message Inspirations
             </motion.h2>
-            
-            <motion.div whileHover="hover" whileTap="tap" variants={itemVariants}>
+
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={fetchSuggestedMessages}
-                className="bg-[#0a0821]/80 hover:bg-[#0f0c30]/80 text-indigo-200 border border-indigo-500/20 shadow-[0_2px_10px_rgba(79,70,229,0.15)]"
+                className="bg-white/10 hover:bg-white/15 text-purple-200 border border-purple-300/30 backdrop-blur-sm"
                 disabled={isRefreshing}
+                size="sm"
               >
-                <motion.div className="flex items-center gap-2">
-                  {isRefreshing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
+                {isRefreshing ? (
+                  <>
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                    Finding Ideas...
+                  </>
+                ) : (
+                  <>
                     <motion.div
                       animate={{ rotate: [0, 360] }}
-                      transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
+                      transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                     >
-                      <RefreshCw className="h-4 w-4" />
+                      <RefreshCw className="mr-2 h-3 w-3" />
                     </motion.div>
-                  )}
-                  {isRefreshing ? "Generating..." : "Refresh Suggestions"}
-                </motion.div>
+                    Refresh Ideas
+                  </>
+                )}
               </Button>
             </motion.div>
+          </div>
+
+          {/* Category filters with animation */}
+          <motion.div
+            className="relative mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/5 text-purple-200 z-10 rounded-full h-8 w-8 flex items-center justify-center shadow-lg shadow-purple-900/10 border border-purple-300/20"
+              onClick={scrollLeft}
+            >
+              <motion.div whileHover={{ x: -2 }} whileTap={{ x: -4 }}>
+                <ChevronLeft className="h-4 w-4" />
+              </motion.div>
+            </Button>
+
+            <div
+              ref={categoryScrollRef}
+              className="flex overflow-x-auto py-2 px-8 space-x-2 scrollbar-hide"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {categories.map((category, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.05, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Button
+                    variant={
+                      selectedCategory === category ? "default" : "outline"
+                    }
+                    size="sm"
+                    className={
+                      selectedCategory === category
+                        ? "bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-400 hover:to-violet-400 text-white shadow-lg shadow-purple-500/20"
+                        : "bg-white/5 border-purple-300/30 text-purple-200 hover:text-purple-100 backdrop-blur-sm"
+                    }
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {/* Animated selection indicator */}
+                    {selectedCategory === category && (
+                      <motion.span
+                        className="absolute inset-0 rounded-md"
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          opacity: [0, 0.2, 0],
+                          scale: [0.8, 1.1, 1],
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                        }}
+                      />
+                    )}
+
+                    <span className="relative z-10">{category}</span>
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/5 text-purple-200 z-10 rounded-full h-8 w-8 flex items-center justify-center shadow-lg shadow-purple-900/10 border border-purple-300/20"
+              onClick={scrollRight}
+            >
+              <motion.div whileHover={{ x: 2 }} whileTap={{ x: 4 }}>
+                <ChevronRight className="h-4 w-4" />
+              </motion.div>
+            </Button>
           </motion.div>
 
-          <Card className="bg-gradient-to-br from-gray-900/80 via-[#0c0a20]/70 to-gray-900/80 border-indigo-500/20 shadow-[0_5px_30px_rgba(79,70,229,0.15)] overflow-hidden">
-            <CardHeader className="border-b border-indigo-900/30 bg-gradient-to-r from-indigo-900/20 to-gray-900/30 pb-4">
-              <p className="text-indigo-200/70 text-sm">
-                Click on any message below to use it as your feedback
-              </p>
-            </CardHeader>
-            <CardContent className="p-6">
-              <AnimatePresence mode="wait">
-                {false ? (
-                  <motion.p 
-                    className="text-red-400 p-4 border border-red-900/30 rounded-lg bg-red-950/30"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                  >
-                    Error message placeholder
-                  </motion.p>
-                ) : (
-                  <motion.div 
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    key={suggestedMessageString} // Changed from completion to suggestedMessageString
-                  >
-                    {parseStringMessages(suggestedMessageString).map((message, index) => (
+          {/* Message suggestions */}
+          <motion.div
+            className="relative"
+            whileHover={{ y: -2 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Card glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-400 to-purple-300 rounded-xl opacity-20 blur-md" />
+
+            <Card className="bg-white/10 border-purple-300/20 backdrop-blur-lg shadow-xl overflow-hidden">
+              <CardContent className="p-5">
+                <AnimatePresence mode="wait">
+                  {isInitialLoading ? (
+                    <motion.div
+                      className="flex justify-center items-center py-12"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
                       <motion.div
-                        key={index}
-                        variants={itemVariants}
-                        whileHover="hover"
-                        whileTap="tap"
-                        layout
+                        animate={{
+                          rotate: 360,
+                          boxShadow: [
+                            "0 0 0 rgba(216, 180, 254, 0)",
+                            "0 0 15px rgba(216, 180, 254, 0.5)",
+                            "0 0 0 rgba(216, 180, 254, 0)",
+                          ],
+                        }}
+                        transition={{
+                          rotate: {
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "linear",
+                          },
+                          boxShadow: { duration: 2, repeat: Infinity },
+                        }}
+                        className="p-3 rounded-full"
                       >
-                        <motion.div
-                          className={`relative overflow-hidden ${selectedMessageIndex === index ? 
-                            'bg-gradient-to-r from-indigo-900/40 to-blue-900/40' : 
-                            'bg-[#0a0821]/60 hover:bg-[#0f0c30]/60'} 
-                            rounded-lg border ${selectedMessageIndex === index ? 
-                            'border-indigo-500/40' : 'border-indigo-800/30'} 
-                            transition-colors p-4 cursor-pointer`}
-                          onClick={() => handleMessageClick(message, index)}
-                        >
-                          {/* Selected message highlight effect */}
-                          {selectedMessageIndex === index && (
-                            <motion.div
-                              className="absolute inset-0 bg-indigo-500/5"
-                              initial={{ opacity: 0 }}
-                              animate={{
-                                opacity: [0, 0.2, 0],
-                                transition: { 
-                                  repeat: Infinity, 
-                                  duration: 1.5,
-                                  ease: "easeInOut"
-                                }
-                              }}
-                            />
-                          )}
-                          
-                          <div className="flex items-start gap-3">
-                            <motion.div
-                              animate={selectedMessageIndex === index ? 
-                                { scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] } : {}}
-                              transition={{ duration: 0.5 }}
-                              className={`rounded-full p-1.5 ${selectedMessageIndex === index ? 
-                                'bg-indigo-500/30 text-indigo-300' : 'bg-indigo-900/50 text-indigo-400/80'}`}
-                            >
-                              <MessageSquare size={16} />
-                            </motion.div>
-                            <p className={`text-sm ${selectedMessageIndex === index ? 'text-indigo-200' : 'text-indigo-200/80'}`}>
-                              {message}
-                            </p>
-                          </div>
-                        </motion.div>
+                        <Loader2 className="h-6 w-6 text-purple-300" />
                       </motion.div>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </CardContent>
-          </Card>
+                    </motion.div>
+                  ) : suggestedMessageString === "" ? (
+                    <motion.div
+                      className="flex flex-col items-center justify-center py-8 text-center"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <motion.div
+                        animate={{
+                          scale: [1, 1.1, 1],
+                          rotate: [0, 5, -5, 0],
+                        }}
+                        transition={{ duration: 4, repeat: Infinity }}
+                        className="bg-purple-500/10 p-4 rounded-full mb-4"
+                      >
+                        <Sparkles className="h-8 w-8 text-purple-300" />
+                      </motion.div>
+                      <div>
+                        <h3 className="text-lg font-medium text-purple-300 mb-2">
+                          No suggestions found
+                        </h3>
+                        <p className="text-purple-200/70 text-sm">
+                          Try selecting a different category or click "Refresh
+                          Ideas"
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                      initial="hidden"
+                      animate="visible"
+                      variants={containerVariants}
+                      key={suggestedMessageString}
+                    >
+                      {parseStringMessages(suggestedMessageString).map(
+                        (message, index) => (
+                          <motion.div
+                            key={index}
+                            variants={itemVariants}
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            whileTap={{ scale: 0.98 }}
+                            layout
+                          >
+                            <motion.div
+                              className={`relative overflow-hidden rounded-md border transition-all cursor-pointer ${
+                                selectedMessageIndex === index
+                                  ? "bg-gradient-to-br from-purple-500/20 to-violet-500/20 border-purple-400/40"
+                                  : "bg-white/5 border-purple-500/10 hover:bg-white/10"
+                              }`}
+                              onClick={() => handleMessageClick(message, index)}
+                            >
+                              {/* Selection highlight effect */}
+                              {selectedMessageIndex === index && (
+                                <motion.div
+                                  className="absolute inset-0 bg-purple-500/5"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: [0, 0.2, 0] }}
+                                  transition={{
+                                    repeat: Infinity,
+                                    duration: 1.5,
+                                    ease: "easeInOut",
+                                  }}
+                                />
+                              )}
+
+                              {/* Animated shine effect on hover */}
+                              <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full"
+                                initial={false}
+                                whileHover={{
+                                  x: ["0%", "150%"],
+                                  transition: { duration: 0.8 },
+                                }}
+                              />
+
+                              <p
+                                className={`p-3 text-sm ${
+                                  selectedMessageIndex === index
+                                    ? "text-purple-100"
+                                    : "text-purple-200/70"
+                                }`}
+                              >
+                                {message}
+                              </p>
+
+                              {/* Selection indicator */}
+                              <motion.div
+                                className="absolute bottom-2 right-2"
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={
+                                  selectedMessageIndex === index
+                                    ? { opacity: 1, scale: 1 }
+                                    : { opacity: 0, scale: 0.5 }
+                                }
+                                transition={{ duration: 0.2 }}
+                              >
+                                <div className="h-2 w-2 rounded-full bg-purple-400" />
+                              </motion.div>
+                            </motion.div>
+                          </motion.div>
+                        )
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </CardContent>
+            </Card>
+          </motion.div>
         </motion.div>
 
-        <Separator className="my-8 bg-indigo-500/20" />
-        
-        <motion.div 
-          className="text-center"
+        {/* Footer with return link */}
+        <motion.footer
+          className="mt-12 text-center pb-8"
           variants={itemVariants}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
         >
-          <motion.p className="text-indigo-200/70 mb-6">
-            Want to receive anonymous feedback like this too?
-          </motion.p>
           <motion.div
-            whileHover="hover"
-            whileTap="tap"
-            variants={itemVariants}
+            className="inline-block"
+            whileHover={{ scale: 1.05, y: -1 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Link href="/sign-up">
-              <Button
-                className="bg-gradient-to-r from-indigo-600/90 to-blue-700/90 hover:from-indigo-600 hover:to-blue-700 text-white border-none shadow-[0_4px_20px_rgba(79,70,229,0.25)] px-8 relative overflow-hidden group"
-              >
-                {/* Better glow effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-indigo-400/0 via-indigo-400/30 to-indigo-400/0 opacity-0 group-hover:opacity-100"
-                  animate={{
-                    left: ["-100%", "100%"],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    repeatType: "loop",
-                    duration: 1.5,
-                    ease: "easeInOut",
-                  }}
-                />
-                <motion.div
-                  className="flex items-center gap-2 relative z-10"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Create Your Own Profile
-                </motion.div>
-              </Button>
+            <Link
+              href="/"
+              className="text-purple-300/60 hover:text-purple-200 text-sm flex items-center gap-1.5 transition-colors"
+            >
+              <Zap className="h-3.5 w-3.5" />
+              <span>Return to Dashboard</span>
             </Link>
           </motion.div>
-          
-          {/* Improved decorative element */}
-          <motion.div 
-            className="mt-12 opacity-20"
-            animate={{ 
-              opacity: [0.1, 0.2, 0.1] 
-            }}
-            transition={{ 
-              duration: 4, 
-              repeat: Infinity,
-              repeatType: "mirror" 
-            }}
+
+          <motion.p
+            className="text-purple-300/30 text-xs mt-3"
+            animate={{ opacity: [0.3, 0.4, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity, repeatType: "mirror" }}
           >
-            <div className="h-[1px] w-[80%] mx-auto bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-          </motion.div>
-        </motion.div>
+            Your anonymous feedback helps people grow and improve
+          </motion.p>
+        </motion.footer>
       </motion.div>
     </div>
   );
