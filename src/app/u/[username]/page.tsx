@@ -8,7 +8,6 @@ import { Loader2, Send, Sparkles, MessageSquare, Wand2, User, RefreshCw } from '
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CardHeader, CardContent, Card } from '@/components/ui/card';
-import { useCompletion } from '@ai-sdk/react';
 import {
   Form,
   FormControl,
@@ -25,6 +24,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { messageSchema } from '@/schemas/messageSchema';
 import { motion, AnimatePresence } from 'framer-motion';
+import suggestedMessages from '@/suggested-messages.json';
 
 const specialChar = '||';
 
@@ -33,8 +33,29 @@ const parseStringMessages = (messageString: string): string[] => {
   return messageString.split(specialChar);
 };
 
-const initialMessageString =
-  "What's your favorite movie?||Do you have any pets?||What's your dream job?";
+// Function to get random messages from the JSON file
+const getRandomMessages = (count: number = 3): string => {
+  // Create a copy of the array to avoid modifying the original
+  const messagesCopy = [...suggestedMessages];
+  const selectedMessages: string[] = [];
+  
+  // Select random messages
+  for (let i = 0; i < count; i++) {
+    if (messagesCopy.length === 0) break;
+    
+    const randomIndex = Math.floor(Math.random() * messagesCopy.length);
+    selectedMessages.push(messagesCopy[randomIndex]);
+    
+    // Remove the selected message to avoid duplicates
+    messagesCopy.splice(randomIndex, 1);
+  }
+  
+  // Join messages with the special character
+  return selectedMessages.join(specialChar);
+};
+
+// Initial message string now uses random messages from the JSON file
+const initialMessageString = getRandomMessages(3);
 
 // Enhanced animations with more dramatic effects
 const containerVariants = {
@@ -259,17 +280,11 @@ const ShootingStars = () => {
 
 export default function SendMessage() {
   const params = useParams<{ username: string }>();
-  const username = params.username;
+  const username = params?.username || 'unknown';
 
-  const {
-    complete,
-    completion,
-    isLoading: isSuggestLoading,
-    error,
-  } = useCompletion({
-    api: '/api/suggest-messages',
-    initialCompletion: initialMessageString,
-  });
+  // Replace useCompletion hook with local state
+  const [suggestedMessageString, setSuggestedMessageString] = useState<string>(initialMessageString);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -303,12 +318,14 @@ export default function SendMessage() {
     }
   };
 
-  const fetchSuggestedMessages = async () => {
-    try {
-      complete('');
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
+  // Updated function to fetch suggested messages locally
+  const fetchSuggestedMessages = () => {
+    setIsRefreshing(true);
+    // Add a slight delay to show the loading state
+    setTimeout(() => {
+      setSuggestedMessageString(getRandomMessages(3));
+      setIsRefreshing(false);
+    }, 500);
   };
 
   return (
@@ -502,10 +519,10 @@ export default function SendMessage() {
               <Button
                 onClick={fetchSuggestedMessages}
                 className="bg-[#0a0821]/80 hover:bg-[#0f0c30]/80 text-indigo-200 border border-indigo-500/20 shadow-[0_2px_10px_rgba(79,70,229,0.15)]"
-                disabled={isSuggestLoading}
+                disabled={isRefreshing}
               >
                 <motion.div className="flex items-center gap-2">
-                  {isSuggestLoading ? (
+                  {isRefreshing ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <motion.div
@@ -515,7 +532,7 @@ export default function SendMessage() {
                       <RefreshCw className="h-4 w-4" />
                     </motion.div>
                   )}
-                  {isSuggestLoading ? "Generating..." : "Refresh Suggestions"}
+                  {isRefreshing ? "Generating..." : "Refresh Suggestions"}
                 </motion.div>
               </Button>
             </motion.div>
@@ -529,14 +546,14 @@ export default function SendMessage() {
             </CardHeader>
             <CardContent className="p-6">
               <AnimatePresence mode="wait">
-                {error ? (
+                {false ? (
                   <motion.p 
                     className="text-red-400 p-4 border border-red-900/30 rounded-lg bg-red-950/30"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                   >
-                    {error.message}
+                    Error message placeholder
                   </motion.p>
                 ) : (
                   <motion.div 
@@ -544,9 +561,9 @@ export default function SendMessage() {
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    key={completion} // Force re-render on new suggestions
+                    key={suggestedMessageString} // Changed from completion to suggestedMessageString
                   >
-                    {parseStringMessages(completion).map((message, index) => (
+                    {parseStringMessages(suggestedMessageString).map((message, index) => (
                       <motion.div
                         key={index}
                         variants={itemVariants}
