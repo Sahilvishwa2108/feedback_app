@@ -1,14 +1,11 @@
 import {
     Html,
     Head,
-    Font,
     Preview,
-    Row,
     Section,
     Text,
     Body,
     Container,
-    Column,
     Heading,
 } from '@react-email/components';
 
@@ -19,89 +16,85 @@ interface VerificationEmailProps {
 
 export default function VerificationEmail({ username, otp }: VerificationEmailProps) {
     return (
-        <Html lang="en" dir='ltr'>
-            <Head>
-                <title>Verification Email</title>
-                <Font
-                    fontFamily='Roboto'
-                    fallbackFontFamily="Verdana"
-                    webFont={{
-                        url: 'https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxK.woff2',
-                        format: 'woff2',
-                    }}
-                    fontWeight={400}
-                    fontStyle='normal'
-                />
-            </Head>
-            <Preview>Here&apos;s your verification code: {otp}</Preview>
+        <Html>
+            <Head />
+            <Preview>Your verification code: {otp}</Preview>
             <Body style={{
-                backgroundColor: '#f6f9fc',
-                fontFamily: 'Roboto, Verdana, sans-serif',
+                backgroundColor: '#f5f5f5',
+                fontFamily: 'Arial, sans-serif',
+                margin: 0,
+                padding: '20px',
             }}>
                 <Container style={{
                     backgroundColor: '#ffffff',
-                    margin: '40px auto',
-                    padding: '20px',
+                    border: '1px solid #eaeaea',
                     borderRadius: '5px',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                    maxWidth: '600px',
+                    margin: '0 auto',
+                    maxWidth: '400px',
+                    padding: '20px',
                 }}>
-                    <Section>
-                        <Heading style={{
-                            color: '#7e22ce', 
-                            fontSize: '24px',
-                            textAlign: 'center',
-                            margin: '10px 0 20px'
-                        }}>
-                            Verification Required
-                        </Heading>
+                    <Heading style={{
+                        color: '#6366f1',
+                        fontSize: '24px',
+                        fontWeight: 'bold',
+                        marginBottom: '20px',
+                        textAlign: 'center',
+                    }}>
+                        Mystery Message
+                    </Heading>
+                    
+                    <Text style={{
+                        color: '#333',
+                        fontSize: '16px',
+                        marginBottom: '24px',
+                    }}>
+                        Hi {username},
+                    </Text>
+                    
+                    <Text style={{
+                        color: '#333',
+                        fontSize: '16px',
+                        marginBottom: '24px',
+                    }}>
+                        Here's your verification code:
+                    </Text>
+                    
+                    <Section style={{
+                        backgroundColor: '#f9f9f9',
+                        border: '1px solid #eaeaea',
+                        borderRadius: '5px',
+                        margin: '0 auto 24px',
+                        padding: '16px',
+                        textAlign: 'center',
+                    }}>
                         <Text style={{
-                            fontSize: '16px',
-                            color: '#333',
-                            lineHeight: '24px'
+                            color: '#6366f1',
+                            fontSize: '32px',
+                            fontWeight: 'bold',
+                            letterSpacing: '6px',
+                            margin: '0',
                         }}>
-                            Hello {username},
-                        </Text>
-                        <Text style={{
-                            fontSize: '16px',
-                            color: '#333',
-                            lineHeight: '24px'
-                        }}>
-                            Thank you for registering with Mystery Message. Please use the following code to verify your email address:
-                        </Text>
-                        <Section style={{
-                            textAlign: 'center',
-                            margin: '30px 0',
-                        }}>
-                            <Text style={{
-                                fontSize: '32px',
-                                color: '#7e22ce',
-                                fontWeight: 'bold',
-                                letterSpacing: '5px',
-                                padding: '15px 20px',
-                                backgroundColor: '#f3e8ff',
-                                borderRadius: '4px',
-                                display: 'inline-block',
-                            }}>
-                                {otp}
-                            </Text>
-                        </Section>
-                        <Text style={{
-                            fontSize: '14px',
-                            color: '#666',
-                        }}>
-                            If you didn't request this code, you can safely ignore this email.
-                        </Text>
-                        <Text style={{
-                            fontSize: '14px',
-                            color: '#666',
-                            marginTop: '30px',
-                            borderTop: '1px solid #eee',
-                            paddingTop: '20px',
-                        }}>
-                            © 2025 Mystery Message. All rights reserved.
+                            {otp}
                         </Text>
                     </Section>
+                    
+                    <Text style={{
+                        color: '#666',
+                        fontSize: '14px',
+                        marginBottom: '0',
+                        textAlign: 'center',
+                    }}>
+                        This code will expire in 10 minutes.
+                    </Text>
+                    
+                    <Text style={{
+                        color: '#888',
+                        fontSize: '12px',
+                        marginTop: '32px',
+                        textAlign: 'center',
+                    }}>
+                        © 2025 Mystery Message • Please check your spam folder if you don't see this email
+                    </Text>
                 </Container>
             </Body>
         </Html>
