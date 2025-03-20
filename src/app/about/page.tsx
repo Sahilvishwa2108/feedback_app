@@ -27,31 +27,27 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-// Cosmic Particles Background
+// Optimized Cosmic Particles - much lighter
 const CosmicParticles = () => {
   const [particles, setParticles] = useState<
-    {
+    Array<{
       id: number;
       size: number;
       x: string;
       y: string;
-      delay: number;
-      duration: number;
       opacity: number;
-    }[]
+    }>
   >([]);
 
   useEffect(() => {
-    // Reduced from 50 to 20 particles
+    // Reduced to 100 static particles
     const generateParticles = () => {
-      return Array.from({ length: 20 }).map((_, i) => ({
+      return Array.from({ length: 100 }).map((_, i) => ({
         id: i,
         size: Math.random() * 3 + 1,
         x: `${Math.random() * 100}%`,
         y: `${Math.random() * 100}%`,
-        delay: Math.random() * 5,
-        duration: Math.random() * 20 + 15, // Slightly slower for better performance
-        opacity: Math.random() * 0.3 + 0.1, // Reduced max opacity
+        opacity: Math.random() * 0.3 + 0.1,
       }));
     };
 
@@ -63,27 +59,17 @@ const CosmicParticles = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {particles.map((particle) => (
-        <motion.div
+        <div
           key={particle.id}
-          className="absolute rounded-full"
+          className="absolute rounded-full animate-pulse"
           style={{
             width: particle.size,
             height: particle.size,
             left: particle.x,
             top: particle.y,
-            backgroundColor: `rgba(94, 28, 207, ${particle.opacity})`, // Darker purple
-          }}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{
-            opacity: [0, particle.opacity, 0],
-            scale: [0, 1, 0],
-            y: [0, -20, 0], // Reduced motion range
-          }}
-          transition={{
-            duration: particle.duration,
-            repeat: Infinity,
-            delay: particle.delay,
-            ease: "easeInOut",
+            backgroundColor: `rgba(94, 28, 207, ${particle.opacity})`,
+            animationDuration: `${Math.random() * 5 + 5}s`,
+            animationDelay: `${Math.random() * 3}s`,
           }}
         />
       ))}
@@ -91,62 +77,40 @@ const CosmicParticles = () => {
   );
 };
 
-// Nebula Effect
+// Simplified Nebula Effect - using CSS instead of animations
 const CosmicNebula = () => {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      <motion.div
-        className="absolute rounded-full opacity-10 blur-[100px]" // Reduced opacity from 0.20 to 0.10
+      <div
+        className="absolute rounded-full opacity-10 blur-[100px] animate-pulse"
         style={{
           background:
-            "radial-gradient(circle, rgba(94, 28, 207, 0.6) 0%, rgba(109, 62, 216, 0.2) 50%, rgba(138, 55, 217, 0.05) 100%)", // Darker colors
+            "radial-gradient(circle, rgba(94, 28, 207, 0.6) 0%, rgba(109, 62, 216, 0.2) 50%, rgba(138, 55, 217, 0.05) 100%)",
           width: "60%",
           height: "60%",
           left: "20%",
           top: "10%",
-        }}
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.1, 0.15, 0.1], // Reduced opacity animation range
-          x: [0, 20, 0],
-          y: [0, -20, 0],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut",
+          animationDuration: "25s",
         }}
       />
-      <motion.div
-        className="absolute rounded-full opacity-10 blur-[120px]" // Reduced opacity from 0.20 to 0.10
+      <div
+        className="absolute rounded-full opacity-10 blur-[120px] animate-pulse"
         style={{
           background:
-            "radial-gradient(circle, rgba(59, 50, 209, 0.5) 0%, rgba(79, 82, 221, 0.2) 50%, rgba(109, 120, 228, 0.05) 100%)", // Darker colors
+            "radial-gradient(circle, rgba(59, 50, 209, 0.5) 0%, rgba(79, 82, 221, 0.2) 50%, rgba(109, 120, 228, 0.05) 100%)",
           width: "50%",
           height: "50%",
           right: "10%",
           bottom: "10%",
-        }}
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.1, 0.12, 0.1], // Reduced opacity animation range
-          x: [0, -30, 0],
-          y: [0, 20, 0],
-        }}
-        transition={{
-          duration: 30,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut",
-          delay: 2,
+          animationDuration: "30s",
+          animationDelay: "2s",
         }}
       />
     </div>
   );
 };
 
-// Star Field
+// Optimized Star Field - fewer stars, mostly static
 const StarField = () => {
   const [stars, setStars] = useState<
     Array<{
@@ -155,19 +119,18 @@ const StarField = () => {
       x: string;
       y: string;
       opacity: number;
-      duration: number;
     }>
   >([]);
 
   useEffect(() => {
-    const starCount = 50; // Reduced from 100 to 50
+    // Reduced to 50 stars, all static
+    const starCount = 50;
     const generatedStars = Array.from({ length: starCount }).map((_, i) => ({
       id: i,
       size: Math.random() * 2 + 0.5,
       x: `${Math.random() * 100}%`,
       y: `${Math.random() * 100}%`,
-      opacity: Math.random() * 0.7 + 0.2, // Slightly increased opacity for better visibility
-      duration: Math.random() * 3 + 2,
+      opacity: Math.random() * 0.7 + 0.2,
     }));
 
     setStars(generatedStars);
@@ -178,7 +141,7 @@ const StarField = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {stars.map((star) => (
-        <motion.div
+        <div
           key={star.id}
           className="absolute rounded-full bg-white"
           style={{
@@ -189,31 +152,21 @@ const StarField = () => {
             opacity: star.opacity / 2,
             boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, ${star.opacity})`,
           }}
-          // Static stars for better performance - no animation
         />
       ))}
-      {/* Only animate a subset of stars for performance */}
-      {stars.slice(0, 15).map((star) => (
-        <motion.div
+      {/* Only animate 10 stars for better performance */}
+      {stars.slice(0, 10).map((star) => (
+        <div
           key={`animated-${star.id}`}
-          className="absolute rounded-full bg-white"
+          className="absolute rounded-full bg-white animate-pulse"
           style={{
             width: star.size,
             height: star.size,
             left: star.x,
             top: star.y,
-            opacity: 0,
+            opacity: star.opacity / 3,
             boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, ${star.opacity})`,
-          }}
-          animate={{
-            opacity: [0, star.opacity, 0],
-          }}
-          transition={{
-            duration: star.duration,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-            delay: star.duration,
+            animationDuration: `${Math.random() * 3 + 3}s`,
           }}
         />
       ))}
@@ -221,33 +174,31 @@ const StarField = () => {
   );
 };
 
-// Grid Lines
+// Simplified Grid Lines - static only
 const GridLines = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Horizontal lines - reduced from 12 to 6 */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
+      {/* Horizontal lines - reduced to 8 */}
+      {[...Array(8)].map((_, i) => (
+        <div
           key={`h-${i}`}
-          className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/5 to-transparent" // Reduced opacity
+          className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/5 to-transparent"
           style={{
-            top: `${(i + 1) * 16}%`,
+            top: `${(i + 1) * 20}%`,
             left: 0,
           }}
-          // Removed animation for better performance
         />
       ))}
 
-      {/* Vertical lines - reduced from 6 to 3 */}
-      {[...Array(3)].map((_, i) => (
-        <motion.div
+      {/* Vertical lines - reduced to 4 */}
+      {[...Array(4)].map((_, i) => (
+        <div
           key={`v-${i}`}
-          className="absolute w-px h-full bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent" // Reduced opacity
+          className="absolute w-px h-full bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent"
           style={{
-            left: `${(i + 1) * 25}%`,
+            left: `${(i + 1) * 33}%`,
             top: 0,
           }}
-          // Removed animation for better performance
         />
       ))}
     </div>
@@ -472,14 +423,15 @@ const FAQItem = ({ question, answer, delay }: FAQItemProps) => {
 // Main About Page Component
 export default function AboutPage() {
   const { scrollYProgress } = useScroll();
-  const heroRef = useRef(null);
+  // heroRef isn't being used with a ref attribute anywhere
   const featuresRef = useRef(null);
   const howItWorksRef = useRef(null);
   const faqRef = useRef(null);
 
-  // Parallax effects
+  // Parallax effects - keep these as they're used in the floating objects
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  // This opacity transform doesn't appear to be used
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   return (
@@ -492,7 +444,6 @@ export default function AboutPage() {
 
       {/* Hero section */}
       <motion.section
-        ref={heroRef}
         className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 px-4 overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -689,8 +640,8 @@ export default function AboutPage() {
             />
             <FeatureCard
               icon={RefreshCw}
-              title="Message Inspiration"
-              description="Struggling with what to say? Use our suggestion system for inspiration based on categories."
+              title="AI-Powered Suggestions"
+              description="OpenAI recommendations helps craft meaningful, constructive feedback for any situation."
               delay={0.6}
             />
           </div>
@@ -717,7 +668,7 @@ export default function AboutPage() {
                   color: [
                     "rgb(224, 231, 255)",
                     "rgb(165, 180, 252)",
-                    "rgb(224, 231, 255)"
+                    "rgb(224, 231, 255)",
                   ],
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
@@ -738,9 +689,6 @@ export default function AboutPage() {
           </motion.div>
 
           <div className="space-y-12 relative">
-            {/* Connecting line - made more visible */}
-            <div className="absolute top-0 bottom-0 left-[32px] w-0.5 bg-gradient-to-b from-purple-500/70 via-indigo-500/70 to-purple-500/70 hidden md:block"></div>
-
             <HowItWorksStep
               icon={CheckCircle}
               title="Create Your Account"
