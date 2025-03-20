@@ -313,23 +313,24 @@ function Navbar() {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <motion.a 
-              href="#" 
-              className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2"
-              variants={itemVariants}
-              whileHover={{ scale: 1.05, x: 3 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  transition: { duration: 2, repeat: Infinity }
-                }}
+            <Link href="/about">
+              <motion.span 
+                className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05, x: 3 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <MessageSquare size={16} className="text-purple-400" />
-              </motion.div>
-              About
-            </motion.a>
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.05, 1],
+                    transition: { duration: 2, repeat: Infinity }
+                  }}
+                >
+                  <MessageSquare size={16} className="text-purple-400" />
+                </motion.div>
+                About
+              </motion.span>
+            </Link>
             <motion.a 
               href="https://github.com/sahilvishwa2108/feedback_app" 
               target="_blank"
@@ -427,16 +428,17 @@ function Navbar() {
             }}
           >
             <div className="py-4 flex flex-col space-y-4">
-              <motion.a 
-                href="#" 
-                className="text-gray-300 hover:text-purple-300 py-2 transition-colors flex items-center gap-2"
-                variants={mobileItemVariants}
-                whileTap={{ scale: 0.95 }}
-                whileHover={{ x: 3 }}
-              >
-                <MessageSquare size={16} className="text-purple-400" />
-                About
-              </motion.a>
+              <Link href="/about">
+                <motion.span 
+                  className="text-gray-300 hover:text-purple-300 py-2 transition-colors flex items-center gap-2"
+                  variants={mobileItemVariants}
+                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ x: 3 }}
+                >
+                  <MessageSquare size={16} className="text-purple-400" />
+                  About
+                </motion.span>
+              </Link>
               <motion.a 
                 href="https://github.com/sahilvishwa2108/feedback_app" 
                 target="_blank"
