@@ -29,29 +29,71 @@ export const authOptions: NextAuthOptions = {
             name: 'Credentials',
             credentials: {
                 email: { label: 'Email', type: 'text' },
-                password: { label: 'Password', type: 'password' }
+                password: { label: 'Password', type: 'password' },
+                autoLogin: { label: 'Auto Login', type: 'text' }
             },
             async authorize(credentials): Promise<User> {
                 console.log("Received Credentials:", credentials);
-                if (!credentials || !credentials.email || !credentials.password) {
+                if (!credentials) {
                     throw new Error("Invalid credentials provided!");
                 }
 
-                await dbConnect()
+                await dbConnect();
                 try {
+                    // Check if this is an auto-login request
+                    if (credentials.autoLogin === 'true') {
+                        console.log("Processing auto-login");
+                        
+                        // Find user by email
+                        const user = await UserModel.findOne({
+                            email: credentials.email
+                        });
+                        
+                        if (!user) {
+                            throw new Error('User not found');
+                        }
+                        
+                        // Validate the auto-login token
+                        if (
+                            user.autoLoginToken === credentials.password && 
+                            user.autoLoginTokenExpiry && 
+                            new Date(user.autoLoginTokenExpiry) > new Date()
+                        ) {
+                            console.log("Auto-login token validated successfully");
+                            
+                            // Clear the token after use (security best practice)
+                            user.autoLoginToken = '';
+                            user.autoLoginTokenExpiry = new Date(0); // Set to epoch time to invalidate
+                            await user.save();
+                            
+                            return user.toObject() as User;
+                        } else {
+                            throw new Error('Invalid or expired auto-login token');
+                        }
+                    }
+                    
+                    // Regular login flow
+                    if (!credentials.email || !credentials.password) {
+                        throw new Error("Email and password are required");
+                    }
+
                     const user = await UserModel.findOne({
                         $or: [
                             { email: credentials.email },
                             { username: credentials.email },
                         ],
-                    })
+                    });
+                    
+                    // Rest of your existing authorize code...
                     if (!user) {
                         console.log("No user found");
-                        throw new Error('No user found with this email!')
+                        throw new Error('No user found with this email!');
                     }
+                    
                     if (!user.isVerified) {
-                        throw new Error('Please verify your account before login')
+                        throw new Error('Please verify your account before login');
                     }
+                    
                     if (!user.password) {
                         throw new Error("User password not found in database");
                     }

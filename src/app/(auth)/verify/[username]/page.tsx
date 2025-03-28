@@ -20,6 +20,7 @@ import { verifySchema } from '@/schemas/verifySchema';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, CheckCircle, Loader2, Sparkles, RefreshCw, Timer } from 'lucide-react';
+import { signIn } from "next-auth/react"; // Add this import
 
 // Mysterious particles effect
 const MysteriousParticles = () => {
@@ -166,7 +167,36 @@ export default function VerifyAccount() {
       });
 
       toast.success(response.data.message);
-      router.replace('/sign-in');
+      
+      // Check if auto-login flag is present in the response
+      if (response.data.autoLogin && response.data.user) {
+        // Get a temporary password token for auto-login
+        try {
+          const tokenResponse = await axios.post<{token: string}>(`/api/get-auto-login-token`, {
+            userId: response.data.user._id,
+          });
+          
+          // Use NextAuth signIn method with the token
+          const signInResult = await signIn("credentials", {
+            redirect: false,
+            email: response.data.user.email,
+            password: tokenResponse.data.token,
+            autoLogin: 'true', // Special flag for the authorize function
+          });
+          
+          if (signInResult?.error) {
+            console.error("Auto-login failed:", signInResult.error);
+            router.replace('/sign-in');
+          } else {
+            router.replace('/dashboard');
+          }
+        } catch (tokenError) {
+          console.error("Failed to get auto-login token:", tokenError);
+          router.replace('/sign-in');
+        }
+      } else {
+        router.replace('/sign-in');
+      }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error(axiosError.response?.data.message ?? 'Failed to verify account');

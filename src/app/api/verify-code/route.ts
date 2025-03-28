@@ -1,5 +1,8 @@
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
+import { SignJWT } from 'jose';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   // Connect to the database
@@ -26,8 +29,21 @@ export async function POST(request: Request) {
       user.isVerified = true;
       await user.save();
 
+      // Return user data for auto-login
+      const userData = {
+        _id: (user._id as { toString(): string }).toString(),
+        username: user.username,
+        email: user.email,
+        isVerified: true
+      };
+
       return Response.json(
-        { success: true, message: 'Account verified successfully' },
+        { 
+          success: true, 
+          message: 'Account verified successfully',
+          user: userData,
+          autoLogin: true  // Flag for frontend to initiate auto-login
+        },
         { status: 200 }
       );
     } else if (!isCodeNotExpired) {

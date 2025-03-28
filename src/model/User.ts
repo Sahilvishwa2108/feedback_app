@@ -26,6 +26,8 @@ export interface User extends Document {
   isVerified: boolean;
   isAcceptingMessages: boolean;
   messages: Message[];
+  autoLoginToken: string;
+  autoLoginTokenExpiry: Date;
 }
 
 // Updated User schema
@@ -63,6 +65,12 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     default: true,
   },
   messages: [MessageSchema],
+  autoLoginToken: { 
+    type: String 
+  },
+  autoLoginTokenExpiry: { 
+    type: Date 
+  },
 });
 
 const UserModel =
