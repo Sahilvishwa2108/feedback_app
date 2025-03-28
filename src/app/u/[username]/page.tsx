@@ -111,47 +111,15 @@ const fadeInVariants = {
 };
 
 const EnhancedBackground = () => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Base gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0F0720] via-[#170B36] to-[#0F0720]" />
+      
+      {/* Static radial glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.15),transparent_60%)]" />
-      {Array.from({ length: 50 }).map((_, i) => {
-        const size = Math.random() * 2 + 0.5;
-        return (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white"
-            style={{
-              width: size,
-              height: size,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.5 + 0.1,
-            }}
-            animate={{
-              opacity: [
-                Math.random() * 0.3 + 0.1,
-                Math.random() * 0.6 + 0.3,
-                Math.random() * 0.3 + 0.1,
-              ],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: Math.random() * 4 + 3,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          />
-        );
-      })}
+      
+      {/* Static dot pattern overlay */}
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -159,28 +127,17 @@ const EnhancedBackground = () => {
             linear-gradient(to right, rgba(167, 139, 250, 0.1) 1px, transparent 1px),
             linear-gradient(to bottom, rgba(167, 139, 250, 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: "60px 60px",
+          backgroundSize: '60px 60px',
         }}
       />
-      {[...Array(3)].map((_, i) => (
-        <motion.div
-          key={`line-${i}`}
-          className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"
-          style={{
-            top: `${25 + i * 25}%`,
-            left: 0,
-          }}
-          animate={{
-            opacity: [0.1, 0.3, 0.1],
-            backgroundPosition: ["0% 0%", "100% 0%"],
-          }}
-          transition={{
-            duration: 15 + i * 5,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      ))}
+      
+      {/* Static accent lines */}
+      <div className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent top-1/4" />
+      <div className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent top-2/4" />
+      <div className="absolute h-px w-full bg-gradient-to-r from-transparent via-purple-500/20 to-transparent top-3/4" />
+      
+      {/* Subtle vignette effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(15,7,32,0.4))]" />
     </div>
   );
 };
@@ -436,26 +393,26 @@ export default function SendMessage() {
         >
           <motion.header
             variants={itemVariants}
-            className="flex flex-col items-center text-center"
+            className="flex flex-col items-center text-center mb-8"
           >
             <div className="relative">
               <motion.div
-                className="absolute -inset-2 rounded-full bg-purple-600/20 blur-xl"
+                className="absolute -inset-1 rounded-full bg-purple-600/20 blur-md"
                 animate={{
-                  scale: [1, 1.2, 1],
+                  scale: [1, 1.1, 1],
                   opacity: [0.3, 0.5, 0.3],
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
               />
 
               <motion.div
-                className="relative flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-800/60 to-indigo-800/60 rounded-full backdrop-blur-md border border-purple-500/30 mb-6 shadow-xl shadow-purple-900/30"
+                className="relative flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-800/60 to-indigo-800/60 rounded-full backdrop-blur-md border border-purple-500/30 mb-4 shadow-xl shadow-purple-900/30"
                 whileHover={{ scale: 1.05 }}
                 animate={{
                   boxShadow: [
-                    "0 10px 30px -10px rgba(139, 92, 246, 0.3)",
-                    "0 10px 40px -5px rgba(139, 92, 246, 0.5)",
-                    "0 10px 30px -10px rgba(139, 92, 246, 0.3)",
+                    "0 5px 20px -10px rgba(139, 92, 246, 0.3)",
+                    "0 5px 25px -5px rgba(139, 92, 246, 0.5)",
+                    "0 5px 20px -10px rgba(139, 92, 246, 0.3)",
                   ],
                 }}
                 transition={{ duration: 3, repeat: Infinity }}
@@ -467,48 +424,54 @@ export default function SendMessage() {
                   }}
                   transition={{ duration: 5, repeat: Infinity }}
                 >
-                  <MessageSquare className="h-10 w-10 text-purple-300" />
+                  <MessageSquare className="h-7 w-7 text-purple-300" />
                 </motion.div>
               </motion.div>
             </div>
 
-            <motion.h1
-              className="text-5xl sm:text-6xl font-bold mb-6 relative"
-              variants={itemVariants}
-            >
-              <span className="inline-block">
-                <span className="bg-gradient-to-r from-violet-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
-                  @{username}
+            <div className="flex flex-col items-center">
+              <motion.h1
+                className="text-4xl sm:text-5xl font-bold relative mb-3"
+                variants={itemVariants}
+              >
+                <span className="inline-block">
+                  <motion.span 
+                    animate={{ 
+                      color: ["rgb(216, 180, 254)", "rgb(167, 139, 250)", "rgb(196, 181, 253)", "rgb(216, 180, 254)"]
+                    }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                    className="flex items-center justify-center"
+                  >
+                    <MessageCircle size={24} className="mr-2 opacity-70 hidden sm:inline-block" />
+                    @{username}
+                  </motion.span>
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent"
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{ scaleX: 1, opacity: 0.8 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                  />
                 </span>
-                <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={{ scaleX: 1, opacity: 0.8 }}
-                  transition={{ delay: 0.5, duration: 0.8 }}
-                />
-              </span>
-            </motion.h1>
+              </motion.h1>
 
-            <motion.p
-              className="max-w-2xl text-purple-200/80 text-lg"
-              variants={itemVariants}
-            >
-              Share your thoughts without revealing who you are.
-              <span className="hidden sm:inline">
-                {" "}
-                Your feedback stays anonymous while helping others grow.
-              </span>
-            </motion.p>
+              <motion.p
+                className="text-purple-200/80 text-base bg-white/5 px-4 py-1.5 rounded-full border border-purple-500/20 backdrop-blur-sm"
+                variants={itemVariants}
+                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.08)" }}
+              >
+                Share your thoughts anonymously
+              </motion.p>
+            </div>
           </motion.header>
 
           <motion.div variants={slideUpVariants} className="relative">
-            <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-purple-500/20 via-violet-500/20 to-indigo-500/20 blur-md" />
+            <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-purple-500/20 via-violet-500/20 to-indigo-500/20 blur-sm" />
 
             <Card className="relative bg-gradient-to-b from-gray-900/80 to-gray-950/80 border-purple-500/20 backdrop-blur-md shadow-2xl overflow-hidden">
               <CardContent className="p-0">
-                <div className="bg-gradient-to-r from-purple-900/70 to-indigo-900/70 px-6 py-5 border-b border-purple-500/20">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-purple-500/20 border border-purple-500/30">
+                <div className="bg-gradient-to-r from-purple-900/70 to-indigo-900/70 px-4 py-3 border-b border-purple-500/20">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/30">
                       <motion.div
                         animate={{
                           rotate: [0, 10, 0, -10, 0],
@@ -519,15 +482,15 @@ export default function SendMessage() {
                           ease: "easeInOut",
                         }}
                       >
-                        <Wand2 className="h-5 w-5 text-purple-300" />
+                        <Wand2 className="h-4 w-4 text-purple-300" />
                       </motion.div>
                     </div>
 
                     <div>
-                      <h2 className="text-xl font-semibold text-white">
+                      <h2 className="text-lg font-semibold text-white">
                         Send Anonymous Message
                       </h2>
-                      <p className="text-sm text-purple-200/70">
+                      <p className="text-xs text-purple-200/70">
                         Your identity remains hidden
                       </p>
                     </div>
@@ -535,20 +498,20 @@ export default function SendMessage() {
                 </div>
 
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="p-6">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="p-4">
                     <FormField
                       control={form.control}
                       name="content"
                       render={({ field }) => (
-                        <FormItem className="space-y-4">
-                          <FormLabel className="text-purple-100 text-base">
+                        <FormItem className="space-y-2">
+                          <FormLabel className="text-purple-100 text-sm">
                             Your Message
                           </FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Textarea
                                 placeholder="Type your anonymous message here..."
-                                className="min-h-40 resize-none bg-gray-800/40 border-purple-500/30 focus-visible:ring-purple-500/50 focus:border-purple-500/50 text-purple-50 placeholder:text-purple-300/40"
+                                className="min-h-28 resize-none bg-gray-800/40 border-purple-500/30 focus-visible:ring-purple-500/50 focus:border-purple-500/50 text-purple-50 placeholder:text-purple-300/40"
                                 {...field}
                               />
                               <AnimatePresence>
@@ -557,7 +520,7 @@ export default function SendMessage() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    className="absolute bottom-3 right-3 text-xs text-purple-300/60 font-mono"
+                                    className="absolute bottom-2 right-2 text-xs text-purple-300/60 font-mono"
                                   >
                                     {field.value.length}/500
                                   </motion.div>
@@ -570,14 +533,14 @@ export default function SendMessage() {
                       )}
                     />
 
-                    <div className="mt-6 flex justify-end">
+                    <div className="mt-4 flex justify-end">
                       <motion.div
                         whileHover={{ scale: isLoading ? 1 : 1.02 }}
                         whileTap={{ scale: isLoading ? 1 : 0.98 }}
                       >
                         <Button
                           type="submit"
-                          className="relative px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/30 overflow-hidden"
+                          className="relative px-6 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/30 overflow-hidden"
                           disabled={isLoading}
                         >
                           <motion.div
@@ -592,12 +555,12 @@ export default function SendMessage() {
 
                           {isLoading ? (
                             <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                               Sending...
                             </>
                           ) : (
                             <>
-                              <Send className="mr-2 h-4 w-4" />
+                              <Send className="mr-2 h-3 w-3" />
                               Send Message
                             </>
                           )}

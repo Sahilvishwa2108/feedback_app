@@ -10,7 +10,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       {children}
-      <Footer />
     </div>
   );
 }
