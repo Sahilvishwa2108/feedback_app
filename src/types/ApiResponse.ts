@@ -1,4 +1,4 @@
-// import { Message } from "@/model/User";
+import { Message } from "@/model/User";
 
 export interface ApiResponse {
   success: boolean;
@@ -15,4 +15,7 @@ export interface ApiResponse {
     [key: string]: any;  // Allow for additional data properties
   };
   error?: string;
+  // Add the missing properties that are causing TypeScript errors
+  isAcceptingMessages?: boolean;
+  messages?: Message[];
 };
