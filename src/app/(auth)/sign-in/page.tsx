@@ -22,7 +22,7 @@ import { useEffect, useState, useRef } from 'react';
 import { MessageSquare, Eye, EyeOff, Lock, UserCircle, Sparkles } from 'lucide-react';
 
 // Better mysterious particles effect
-const MysteriousParticles = () => {
+export const MysteriousParticles = () => {
   // Using client-side rendering to avoid hydration issues
   const [isClient, setIsClient] = useState(false);
   
@@ -343,6 +343,19 @@ export default function SignInForm() {
                       </FormItem>
                     )}
                   />
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="flex justify-end">
+                  <Link 
+                    href="/forgot-password" 
+                    className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    <motion.span whileHover={{ 
+                      textShadow: "0 0 8px rgba(168, 85, 247, 0.6)",
+                     }}>
+                      Forgot password?
+                    </motion.span>
+                  </Link>
                 </motion.div>
 
                 <motion.div 

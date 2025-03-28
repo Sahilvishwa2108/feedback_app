@@ -28,6 +28,8 @@ export interface User extends Document {
   messages: Message[];
   autoLoginToken: string;
   autoLoginTokenExpiry: Date;
+  resetToken: string;
+  resetTokenExpiry: Date;
 }
 
 // Updated User schema
@@ -70,6 +72,12 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   },
   autoLoginTokenExpiry: { 
     type: Date 
+  },
+  resetToken: {
+    type: String
+  },
+  resetTokenExpiry: {
+    type: Date
   },
 });
 

@@ -10,4 +10,9 @@ export interface ApiResponse {
     isVerified: boolean;
   };
   autoLogin?: boolean;
+  data?: {
+    messageId: string;
+    [key: string]: any;  // Allow for additional data properties
+  };
+  error?: string;
 };
