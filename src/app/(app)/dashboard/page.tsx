@@ -445,7 +445,7 @@ function UserDashboard() {
           variants={itemVariants}
         >
           <motion.h1
-            className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-blue-300 mb-2"
+            className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-blue-300 mb-4 py-1 leading-relaxed"
             animate={{ 
               textShadow: [
                 "0 0 8px rgba(168, 85, 247, 0.4)",
@@ -610,18 +610,14 @@ function UserDashboard() {
                     }}
                     disabled={isLoading}
                   >
-                    <motion.div 
-                      className="flex items-center gap-2"
-                      animate={isLoading ? { rotate: 360 } : {}}
-                      transition={{ repeat: isLoading ? Infinity : 0, duration: 1, ease: "linear" }}
-                    >
+                    <div className="flex items-center gap-2">
                       {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <RefreshCcw className="h-4 w-4" />
                       )}
                       {isLoading ? 'Refreshing...' : 'Refresh Messages'}
-                    </motion.div>
+                    </div>
                   </Button>
                 </motion.div>
               </motion.div>
