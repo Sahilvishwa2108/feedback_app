@@ -33,9 +33,9 @@ export async function sendVerificationEmail(
 
     // Send email via nodemailer
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || "Mystery Message <sahilvishwa2108@gmail.com>",
+      from: process.env.EMAIL_FROM,
       to: email,
-      subject: 'Mystery Message Verification Code',
+      subject: 'Anonymous Feedback Verification Code',
       html: htmlContent,
       text: textContent,
     });

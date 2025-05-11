@@ -4,13 +4,18 @@ import nodemailer from 'nodemailer';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'sahilvishwa2108@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'zjfx obfh thac dabr', // App password, not regular password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
   },
   tls: {
     rejectUnauthorized: false // Helps with self-signed certificates
   }
 });
+
+// Add error handling if credentials aren't available
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  console.error('Email credentials not configured properly in environment variables');
+}
 
 // Verify connection configuration (optional but recommended)
 transporter.verify((error: Error | null) => {
