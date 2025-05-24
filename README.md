@@ -1,7 +1,5 @@
 # ✨ Mystery Message
 
-![Mystery Message](public/app-preview.png)
-
 A modern web application that enables anonymous feedback for personal growth and honest communication.
 
 ## 🌟 Features
